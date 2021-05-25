@@ -1,0 +1,16 @@
+{
+  "name": "lumen-module-focus-stats",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "config": "node-gyp configure",
+    "build": "node-gyp build",
+    "electron-build": "electron-rebuild -f -w lumen-module-focus-stats -v 10.2.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "gypfile": true,
+  "devDependencies": {
+    "electron-rebuild": "^2.3.5"
+  }
+}
