@@ -2,8 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const getActiveProgram = require('./build/Release/getActiveProgram');
 
-const historyJson = fs.readFileSync(path.resolve(__dirname, './history.json'), 'utf-8');
-const history = JSON.parse(historyJson);
+let history = [];
+if(AppDataManager.exists('focus-stats', 'history')) {
+	history = AppDataManager.loadObject('focus-stats', 'history');
+}
 
 function addNewActivityToHistory() {
 	const currProgramName = getActiveProgram.getActiveProgramName();
@@ -27,5 +29,5 @@ setInterval(() => {
 		addNewActivityToHistory();
 	}
 
-	fs.writeFileSync(path.resolve(__dirname, './history.json'), JSON.stringify(history));
+	AppDataManager.saveObject('focus-stats', 'history', history);
 }, 1000);
