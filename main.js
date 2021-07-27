@@ -2,32 +2,46 @@ const fs = require('fs');
 const path = require('path');
 const getActiveProgram = require('./build/Release/getActiveProgram');
 
-let history = [];
+let history = {};
 if(AppDataManager.exists('focus-stats', 'history')) {
 	history = AppDataManager.loadObject('focus-stats', 'history');
 }
 
+let lastActivityExe = '';
+let lastActivityName = '';
+let lastActivityId = '';
+
 function addNewActivityToHistory() {
+	const currProgramExe  = getActiveProgram.getActiveProgramExe();
 	const currProgramName = getActiveProgram.getActiveProgramName();
 
-	console.log(new Date(), 'New activity:', currProgramName, getActiveProgram.getActiveProgramExe());
-	console.log(new Date(), 'Exe:', getActiveProgram.getActiveProgramExe());
+	//console.log(new Date(), 'New activity:', currProgramName, getActiveProgram.getActiveProgramExe());
+	//console.log(new Date(), 'Exe:', getActiveProgram.getActiveProgramExe());
 
-	history.push({
-		exe: getActiveProgram.getActiveProgramExe(),
-		name: currProgramName,
-		date: new Date(),
-		duration: 0,
-	});
+	if(!history[currProgramExe]) {
+		history[currProgramExe] = {};
+	}
+	if(!history[currProgramExe][currProgramName]) {
+		history[currProgramExe][currProgramName] = [];
+	}
+
+	if(lastActivityExe === currProgramExe && lastActivityName === currProgramName) {
+		history[currProgramExe][currProgramName][lastActivityId].duration++;
+	} else {
+		lastActivityExe  = currProgramExe;
+		lastActivityName = currProgramName;
+
+		lastActivityId = history[currProgramExe][currProgramName].push({
+			date: new Date(),
+			duration: 0,
+		}) - 1;
+	}
+
 }
 addNewActivityToHistory();
 
-setInterval(() => {
-	if(history[history.length - 1].name === getActiveProgram.getActiveProgramName()) {
-		history[history.length - 1].duration++;
-	} else {
-		addNewActivityToHistory();
-	}
+setInterval(addNewActivityToHistory, 1000);
 
+setInterval(() => {
 	AppDataManager.saveObject('focus-stats', 'history', history);
-}, 1000);
+}, 30000);
