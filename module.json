@@ -1,6 +1,6 @@
 {
-	"name": "emptyModel",
-	"fullName": "L.U.M.E.N. empty model",
+	"name": "focus-stats",
+	"fullName": "Focus stats module",
 	"author": "Elanis",
 	"version": "1.0.0",
 	"dependencies": {},
