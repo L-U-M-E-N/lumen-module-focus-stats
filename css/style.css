@@ -1,0 +1,50 @@
+#main-focus-stats input {
+	padding: 0.25rem;
+}
+
+#main-focus-stats {
+	width: 90%;
+	margin: 0 auto;
+}
+
+#main-focus-stats table {
+	word-break: break-word;
+}
+#main-focus-stats th {
+	min-width: 100px;
+}
+
+
+.main-focus-stats-form {
+	padding: 1rem 0;
+}
+.main-focus-stats-form input[type="text"] {
+	width: calc(75% - 4px);
+}
+.main-focus-stats-form input[type="button"] {
+	width: calc(25% - 4px);
+}
+
+kbd {
+	background-color: #eee;
+	border-radius: 3px;
+	border: 1px solid #b4b4b4;
+	box-shadow: 0 1px 1px rgb(0 0 0 / 20%), 0 2px 0 0 rgb(255 255 255 / 70%) inset;
+	color: #333;
+	display: inline-block;
+	font-size: .85em;
+	font-weight: 700;
+	line-height: 1;
+	padding: 2px 4px;
+	white-space: nowrap;
+	margin-right: 0.25rem;
+}
+
+.main-focus-stats-search {
+	margin: 1rem;
+}
+
+#main-focus-stats-search-input {
+	width: 100%;
+	font-size: 1.25rem;
+}

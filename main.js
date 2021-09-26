@@ -6,6 +6,9 @@ let history = {};
 if(AppDataManager.exists('focus-stats', 'history')) {
 	history = AppDataManager.loadObject('focus-stats', 'history');
 }
+if(!AppDataManager.exists('focus-stats', 'tags')) {
+	AppDataManager.saveObject('focus-stats', 'tags', {});
+}
 
 let lastActivityExe = '';
 let lastActivityName = '';
