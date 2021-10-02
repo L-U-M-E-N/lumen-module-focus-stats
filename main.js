@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const getActiveProgram = require('./build/Release/getActiveProgram');
+import fs from 'fs';
+import path from 'path';
+import getActiveProgram from './getActiveProgram.cjs';
 
 let history = {};
 if(AppDataManager.exists('focus-stats', 'history')) {

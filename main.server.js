@@ -1,10 +1,10 @@
-const fs = require('fs');
+import fs from 'fs';
 const folder = '';
 
 const tags 		= JSON.parse(fs.readFileSync(folder + 'tags.json'));
 const history 	= JSON.parse(fs.readFileSync(folder + 'history.json'));
 
-module.exports = class FocusStats {
+export default class FocusStats {
 	static init() {
 		FocusStats.update();
 
