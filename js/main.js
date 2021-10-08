@@ -2,11 +2,14 @@ class FocusStats {
 	static async init() {
 		FocusStats.searchFilter = '';
 
-		await FocusStats.reload();
+		FocusStats.history = await AppDataManager.loadObject('focus-stats', 'history');
+		FocusStats.tagsData = await AppDataManager.loadObject('focus-stats', 'tags');
+
+		FocusStats.reload();
 	}
 
 	static async reload() {
-		await FocusStats.computeData();
+		FocusStats.computeData();
 
 		// Generate DOM
 		FocusStats.regenerateList();
@@ -17,19 +20,16 @@ class FocusStats {
 	}
 
 	static async computeData() {
-		const history = await AppDataManager.loadObject('focus-stats', 'history');
-		const tagsData = await AppDataManager.loadObject('focus-stats', 'tags');
-
 		FocusStats.computedData = {};
-		for(const name in history) {
-			for(const exe in history[name]) {
+		for(const name in FocusStats.history) {
+			for(const exe in FocusStats.history[name]) {
 				if(!FocusStats.computedData[[name, exe]]) {
 					FocusStats.computedData[[name, exe]] = {
 						name,
 						exe,
-						totalDuration: history[name][exe].reduce((acc, val) => acc + val.duration, 0),
-						history: history[name][exe],
-						tags: (tagsData[name] && tagsData[name][exe]) ? tagsData[name][exe] : [],
+						totalDuration: FocusStats.history[name][exe].reduce((acc, val) => acc + val.duration, 0),
+						history: FocusStats.history[name][exe],
+						tags: (FocusStats.tagsData[name] && FocusStats.tagsData[name][exe]) ? FocusStats.tagsData[name][exe] : [],
 					};
 				}
 			}
@@ -40,24 +40,23 @@ class FocusStats {
 		document.getElementById('assignTags').addEventListener('click', async() => {
 			const newTags = document.getElementById('newTags').value.split(',').map((elt) => elt.trim().toLowerCase()).filter((elt) => elt !== '');
 
-			const tagsData = await AppDataManager.loadObject('focus-stats', 'tags');
 			for(const checkedElement of FocusStats.checked) {
 				const name = checkedElement.name;
 				const exe = checkedElement.exe;
 
-				if(!tagsData[name]) {
-					tagsData[name] = {};
+				if(!FocusStats.tagsData[name]) {
+					FocusStats.tagsData[name] = {};
 				}
 
-				if(!Array.isArray(tagsData[name][exe])) {
-					tagsData[name][exe] = [];
+				if(!Array.isArray(FocusStats.tagsData[name][exe])) {
+					FocusStats.tagsData[name][exe] = [];
 				}
 
-				tagsData[name][exe] = Array.from(new Set([...tagsData[name][exe], ...newTags]));
+				FocusStats.tagsData[name][exe] = Array.from(new Set([...FocusStats.tagsData[name][exe], ...newTags]));
 			}
-			await AppDataManager.saveObject('focus-stats', 'tags', tagsData);
+			await AppDataManager.saveObject('focus-stats', 'tags', FocusStats.tagsData);
 
-			await FocusStats.reload();
+			FocusStats.reload();
 		});
 
 		for(const element of Array.from(document.querySelectorAll('#main-focus-stats-data input[type=checkbox]'))) {
