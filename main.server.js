@@ -20,7 +20,7 @@ export default class FocusStats {
 		const minDate = (await Database.execQuery(
 				'SELECT MAX(date) as min FROM focus_stats', []
 			)).rows[0].min;
-		minDate.setHours(minDate.getHours() - 6); // Safety margin
+		minDate.setMinutes(minDate.getMinutes() - 5); // Safety margin
 
 		const history 	= JSON.parse(fs.readFileSync(folder + 'history.json'));
 		for(const name in history) {
