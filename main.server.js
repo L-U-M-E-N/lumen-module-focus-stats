@@ -17,14 +17,22 @@ export default class FocusStats {
 	}
 
 	static async update() {
-		const minDate = (await Database.execQuery(
+		let minDate = (await Database.execQuery(
 				'SELECT MAX(date) as min FROM focus_stats', []
 			)).rows[0].min;
-		minDate.setMinutes(minDate.getMinutes() - 5); // Safety margin
+		if(minDate === null) {
+			minDate = new Date(0);
+		} else {
+			minDate.setMinutes(minDate.getMinutes() - 5); // Safety margin
+		}
 
 		const history 	= JSON.parse(fs.readFileSync(folder + 'history.json'));
 		for(const name in history) {
 			for(const exe in history[name]) {
+				if(name === '' && exe === '') {
+					continue;
+				}
+
 				for(const element of history[name][exe]) {
 					const date = new Date(element.date);
 
