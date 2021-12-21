@@ -41,7 +41,6 @@ function addNewActivityToHistory() {
 	}
 
 }
-addNewActivityToHistory();
 
 setInterval(addNewActivityToHistory, 1000);
 
