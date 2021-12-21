@@ -5,6 +5,8 @@ class FocusStats {
 		FocusStats.history = await AppDataManager.loadObject('focus-stats', 'history');
 		FocusStats.tagsData = await AppDataManager.loadObject('focus-stats', 'tags');
 
+		document.getElementById('hide-tagged').addEventListener('change', FocusStats.reload);
+
 		FocusStats.reload();
 	}
 
@@ -119,6 +121,10 @@ class FocusStats {
 
 		let list = Object.values(FocusStats.computedData);
 		list.sort((a, b) => b.totalDuration - a.totalDuration);
+
+		if(document.getElementById('hide-tagged').checked) {
+			list = list.filter((elt) => !elt.tags || elt.tags.length === 0);
+		}
 
 		if(FocusStats.searchFilter !== '') {
 			list = list.filter((elt) => elt.name.toLowerCase().includes(FocusStats.searchFilter) || elt.exe.toLowerCase().includes(FocusStats.searchFilter));

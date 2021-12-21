@@ -9,9 +9,16 @@
 
 #main-focus-stats table {
 	word-break: break-word;
+	border-collapse: collapse;
 }
 #main-focus-stats th {
 	min-width: 100px;
+}
+#main-focus-stats th:first-child {
+	text-align: left;
+}
+#main-focus-stats tr:hover {
+	background: #FFFFFF11;
 }
 
 
@@ -47,4 +54,13 @@ kbd {
 #main-focus-stats-search-input {
 	width: 100%;
 	font-size: 1.25rem;
+}
+
+.main-focus-stats-tagList {
+	display: inline-block;
+    padding-left: 0.5rem;
+}
+
+.main-focus-stats-options {
+	padding-top: 0.5rem;
 }
