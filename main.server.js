@@ -1,5 +1,5 @@
 import fs from 'fs';
-const folder = '';
+const folder = 'G:\\Lumen\\resources\\app\\data\\focus-stats\\';
 
 const tags 		= JSON.parse(fs.readFileSync(folder + 'tags.json'));
 const history 	= JSON.parse(fs.readFileSync(folder + 'history.json'));
@@ -55,14 +55,26 @@ export default class FocusStats {
 			}
 		}
 
-		// Clean tags
-		await Database.execQuery('DELETE FROM focus_stats_tags');
+		log('Saved current focus stats', 'info');
+		log('Saving tags focus stats assignements', 'info');
+
+		// Get already inserted tags
+		const data = (await Database.execQuery('SELECT * FROM focus_stats_tags')).rows;
+
+		// TODO: delete data that has been removed on UI
+		// We won't do it now because there's now way to remove tags from UI atm
 
 		// Insert tags
 		const tags 		= JSON.parse(fs.readFileSync(folder + 'tags.json'));
 		for(const name in tags) {
 			for(const exe in tags[name]) {
 				for(const tag of tags[name][exe]) {
+					if(data.filter(
+						(elt) => elt.name === name && elt.exe === exe && elt.tag === tag
+					).length > 0) {
+						continue;
+					}
+
 					const [query, values] = Database.buildInsertQuery('focus_stats_tags', {
 						name,
 						exe,
@@ -77,6 +89,6 @@ export default class FocusStats {
 			}
 		}
 
-		log('Saved current focus stats', 'info');
+		log('Saved tags focus stats assignements', 'info');
 	}
-};
+}
