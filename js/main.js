@@ -5,6 +5,7 @@ class FocusStats {
 		FocusStats.history = await AppDataManager.loadObject('focus-stats', 'history');
 		FocusStats.tagsData = await AppDataManager.loadObject('focus-stats', 'tags');
 
+		document.getElementById('hide-tagged').removeEventListener('change', FocusStats.reload);
 		document.getElementById('hide-tagged').addEventListener('change', FocusStats.reload);
 
 		FocusStats.reload();
