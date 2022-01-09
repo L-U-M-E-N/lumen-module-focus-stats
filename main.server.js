@@ -17,13 +17,10 @@ export default class FocusStats {
 	}
 
 	static async update() {
-		let minDate = (await Database.execQuery(
-				'SELECT MAX(date) as min FROM focus_stats', []
-			)).rows[0].min;
-		if(minDate === null) {
-			minDate = new Date(0);
-		} else {
-			minDate.setMinutes(minDate.getMinutes() - 5); // Safety margin
+		const dbEntries = (await Database.execQuery('SELECT date, duration FROM focus_stats')).rows;
+		const dbEntriesMapped = {};
+		for(const dbEntry of dbEntries) {
+			dbEntriesMapped[dbEntry.date.getTime()] = dbEntry.duration;
 		}
 
 		const history 	= JSON.parse(fs.readFileSync(folder + 'history.json'));
@@ -36,7 +33,15 @@ export default class FocusStats {
 				for(const element of history[name][exe]) {
 					const date = new Date(element.date);
 
-					if(date.getTime() < minDate.getTime()) {
+
+					if(typeof dbEntriesMapped[date.getTime()] !== 'undefined') {
+						if(dbEntriesMapped[date.getTime()] !== element.duration) {
+							await Database.execQuery(
+								'UPDATE focus_stats SET duration = $2 WHERE date = $1',
+								[date, element.duration]
+							);
+						}
+
 						continue;
 					}
 
