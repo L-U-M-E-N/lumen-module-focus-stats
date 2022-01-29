@@ -12,6 +12,6 @@
   "license": "ISC",
   "gypfile": true,
   "devDependencies": {
-    "electron-rebuild": "^2.3.5"
+    "electron-rebuild": "^3.2.7"
   }
 }
