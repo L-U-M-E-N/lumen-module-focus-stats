@@ -17,10 +17,10 @@ export default class FocusStats {
 	}
 
 	static async update() {
-		const dbEntries = (await Database.execQuery('SELECT date, duration FROM focus_stats')).rows;
+		const dbEntries = (await Database.execQuery('SELECT date, duration, exe, name FROM focus_stats')).rows;
 		const dbEntriesMapped = {};
 		for(const dbEntry of dbEntries) {
-			dbEntriesMapped[dbEntry.date.getTime()] = dbEntry.duration;
+			dbEntriesMapped[dbEntry.date.getTime()] = dbEntry;
 		}
 
 		const history 	= JSON.parse(fs.readFileSync(folder + 'history.json'));
@@ -33,16 +33,19 @@ export default class FocusStats {
 				for(const element of history[name][exe]) {
 					const date = new Date(element.date);
 
-
 					if(typeof dbEntriesMapped[date.getTime()] !== 'undefined') {
-						if(dbEntriesMapped[date.getTime()] !== element.duration) {
-							await Database.execQuery(
-								'UPDATE focus_stats SET duration = $2 WHERE date = $1',
-								[date, element.duration]
-							);
+						if(
+							dbEntriesMapped[date.getTime()].duration === element.duration &&
+							dbEntriesMapped[date.getTime()].name === name &&
+							dbEntriesMapped[date.getTime()].exe === exe) {
+
+							continue;
 						}
 
-						continue;
+						await Database.execQuery(
+							'DELETE FROM focus_stats WHERE date = $1',
+							[date]
+						);
 					}
 
 					const [query, values] = Database.buildInsertQuery('focus_stats', {
