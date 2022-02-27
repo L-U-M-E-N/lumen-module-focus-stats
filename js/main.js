@@ -70,7 +70,7 @@ class FocusStats {
 				if(element.checked) {
 					FocusStats.checked.push({exe, name});
 				} else {
-					FocusStats.checked = FocusStats.checked.filter((elt) => elt.name !== name && elt.exe !== exe);
+					FocusStats.checked = FocusStats.checked.filter((elt) => elt.name !== name || elt.exe !== exe);
 				}
 			});
 		}
