@@ -8,6 +8,8 @@ class FocusStats {
 		document.getElementById('hide-tagged').removeEventListener('change', FocusStats.reload);
 		document.getElementById('hide-tagged').addEventListener('change', FocusStats.reload);
 
+		FocusStats.setupMainFormEvents();
+
 		FocusStats.reload();
 	}
 
@@ -18,8 +20,7 @@ class FocusStats {
 		FocusStats.regenerateList();
 		FocusStats.regenerateTagList();
 
-		FocusStats.setupAddTagsEvent();
-		FocusStats.setupFilterEvents();
+		FocusStats.setupListEvents();
 	}
 
 	static async computeData() {
@@ -39,7 +40,7 @@ class FocusStats {
 		}
 	}
 
-	static setupAddTagsEvent() {
+	static setupMainFormEvents() {
 		document.getElementById('assignTags').addEventListener('click', async() => {
 			const newTags = document.getElementById('newTags').value.split(',').map((elt) => elt.trim().toLowerCase()).filter((elt) => elt !== '');
 
@@ -62,21 +63,6 @@ class FocusStats {
 			FocusStats.reload();
 		});
 
-		for(const element of Array.from(document.querySelectorAll('#main-focus-stats-data input[type=checkbox]'))) {
-			element.addEventListener('change', () => {
-				const exe = element.getAttribute('exe');
-				const name = element.getAttribute('name');
-
-				if(element.checked) {
-					FocusStats.checked.push({exe, name});
-				} else {
-					FocusStats.checked = FocusStats.checked.filter((elt) => elt.name !== name || elt.exe !== exe);
-				}
-			});
-		}
-	}
-
-	static setupFilterEvents() {
 		const input = document.getElementById('main-focus-stats-search-input');
 		input.addEventListener('change', () => {
 			FocusStats.searchFilter = input.value.toLowerCase();
@@ -92,6 +78,21 @@ class FocusStats {
 				elt.dispatchEvent(new Event('change'));
 			});
 		});
+	}
+
+	static setupListEvents() {
+		for(const element of Array.from(document.querySelectorAll('#main-focus-stats-data input[type=checkbox]'))) {
+			element.addEventListener('change', () => {
+				const exe = element.getAttribute('exe');
+				const name = element.getAttribute('name');
+
+				if(element.checked) {
+					FocusStats.checked.push({exe, name});
+				} else {
+					FocusStats.checked = FocusStats.checked.filter((elt) => elt.name !== name || elt.exe !== exe);
+				}
+			});
+		}
 	}
 
 	static regenerateTagList() {
