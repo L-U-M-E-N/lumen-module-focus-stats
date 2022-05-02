@@ -15,8 +15,8 @@ let lastActivityName = '';
 let lastActivityId = '';
 
 function addNewActivityToHistory() {
-	const currProgramExe  = getActiveProgram.getActiveProgramExe();
-	const currProgramName = getActiveProgram.getActiveProgramName();
+	const currProgramExe  = getActiveProgram.getActiveProgramExe().substring(0, 1000);
+	const currProgramName = getActiveProgram.getActiveProgramName().substring(0, 1000);
 
 	//console.log(new Date(), 'New activity:', currProgramName, getActiveProgram.getActiveProgramExe());
 	//console.log(new Date(), 'Exe:', getActiveProgram.getActiveProgramExe());
