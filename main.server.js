@@ -16,86 +16,90 @@ export default class FocusStats {
 	}
 
 	static async update() {
-		const dbEntries = (await Database.execQuery('SELECT date, duration, exe, name FROM focus_stats')).rows;
-		const dbEntriesMapped = {};
-		for(const dbEntry of dbEntries) {
-			dbEntriesMapped[dbEntry.date.getTime()] = dbEntry;
-		}
-
-		const history 	= JSON.parse(fs.readFileSync(config['focus-stats']['dataFolder'] + 'history.json'));
-		for(const name in history) {
-			for(const exe in history[name]) {
-				if(name === '' && exe === '') {
-					continue;
-				}
-
-				for(const element of history[name][exe]) {
-					const date = new Date(element.date);
-
-					if(typeof dbEntriesMapped[date.getTime()] !== 'undefined') {
-						if(
-							dbEntriesMapped[date.getTime()].duration === element.duration &&
-							dbEntriesMapped[date.getTime()].name === name &&
-							dbEntriesMapped[date.getTime()].exe === exe) {
-
-							continue;
-						}
-
-						await Database.execQuery(
-							'DELETE FROM focus_stats WHERE date = $1',
-							[date]
-						);
-					}
-
-					const [query, values] = Database.buildInsertQuery('focus_stats', {
-						name,
-						exe,
-						date,
-						duration: element.duration,
-					});
-
-					await Database.execQuery(
-						query,
-						values
-					);
-				}
+		try {
+			const dbEntries = (await Database.execQuery('SELECT date, duration, exe, name FROM focus_stats')).rows;
+			const dbEntriesMapped = {};
+			for(const dbEntry of dbEntries) {
+				dbEntriesMapped[dbEntry.date.getTime()] = dbEntry;
 			}
-		}
 
-		log('Saved current focus stats', 'info');
-		log('Saving tags focus stats assignements', 'info');
-
-		// Get already inserted tags
-		const data = (await Database.execQuery('SELECT * FROM focus_stats_tags')).rows;
-
-		// TODO: delete data that has been removed on UI
-		// We won't do it now because there's now way to remove tags from UI atm
-
-		// Insert tags
-		const tags 		= JSON.parse(fs.readFileSync(config['focus-stats']['dataFolder'] + 'tags.json'));
-		for(const name in tags) {
-			for(const exe in tags[name]) {
-				for(const tag of tags[name][exe]) {
-					if(data.filter(
-						(elt) => elt.name === name && elt.exe === exe && elt.tag === tag
-					).length > 0) {
+			const history 	= JSON.parse(fs.readFileSync(config['focus-stats']['dataFolder'] + 'history.json'));
+			for(const name in history) {
+				for(const exe in history[name]) {
+					if(name === '' && exe === '') {
 						continue;
 					}
 
-					const [query, values] = Database.buildInsertQuery('focus_stats_tags', {
-						name,
-						exe,
-						tag
-					});
+					for(const element of history[name][exe]) {
+						const date = new Date(element.date);
 
-					await Database.execQuery(
-						query,
-						values
-					);
+						if(typeof dbEntriesMapped[date.getTime()] !== 'undefined') {
+							if(
+								dbEntriesMapped[date.getTime()].duration === element.duration &&
+								dbEntriesMapped[date.getTime()].name === name &&
+								dbEntriesMapped[date.getTime()].exe === exe) {
+
+								continue;
+							}
+
+							await Database.execQuery(
+								'DELETE FROM focus_stats WHERE date = $1',
+								[date]
+							);
+						}
+
+						const [query, values] = Database.buildInsertQuery('focus_stats', {
+							name,
+							exe,
+							date,
+							duration: element.duration,
+						});
+
+						await Database.execQuery(
+							query,
+							values
+						);
+					}
 				}
 			}
-		}
 
-		log('Saved tags focus stats assignements', 'info');
+			log('Saved current focus stats', 'info');
+			log('Saving tags focus stats assignements', 'info');
+
+			// Get already inserted tags
+			const data = (await Database.execQuery('SELECT * FROM focus_stats_tags')).rows;
+
+			// TODO: delete data that has been removed on UI
+			// We won't do it now because there's now way to remove tags from UI atm
+
+			// Insert tags
+			const tags 		= JSON.parse(fs.readFileSync(config['focus-stats']['dataFolder'] + 'tags.json'));
+			for(const name in tags) {
+				for(const exe in tags[name]) {
+					for(const tag of tags[name][exe]) {
+						if(data.filter(
+							(elt) => elt.name === name && elt.exe === exe && elt.tag === tag
+						).length > 0) {
+							continue;
+						}
+
+						const [query, values] = Database.buildInsertQuery('focus_stats_tags', {
+							name,
+							exe,
+							tag
+						});
+
+						await Database.execQuery(
+							query,
+							values
+						);
+					}
+				}
+			}
+
+			log('Saved tags focus stats assignements', 'info');
+		} catch(e) {
+			console.error(e);
+		}
 	}
 }
