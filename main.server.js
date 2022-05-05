@@ -1,7 +1,7 @@
 import fs from 'fs';
 
-const tags 		= JSON.parse(fs.readFileSync(config['focus-stats']['dataFolder'] + 'tags.json'));
-const history 	= JSON.parse(fs.readFileSync(config['focus-stats']['dataFolder'] + 'history.json'));
+const tags 		= JSON.parse(fs.readFileSync(config['dataFolder'] + 'tags.json'));
+const history 	= JSON.parse(fs.readFileSync(config['dataFolder'] + 'history.json'));
 
 export default class FocusStats {
 	static init() {
@@ -23,7 +23,7 @@ export default class FocusStats {
 				dbEntriesMapped[dbEntry.date.getTime()] = dbEntry;
 			}
 
-			const history 	= JSON.parse(fs.readFileSync(config['focus-stats']['dataFolder'] + 'history.json'));
+			const history 	= JSON.parse(fs.readFileSync(config['dataFolder'] + 'history.json'));
 			for(const name in history) {
 				for(const exe in history[name]) {
 					if(name === '' && exe === '') {
@@ -73,7 +73,7 @@ export default class FocusStats {
 			// We won't do it now because there's now way to remove tags from UI atm
 
 			// Insert tags
-			const tags 		= JSON.parse(fs.readFileSync(config['focus-stats']['dataFolder'] + 'tags.json'));
+			const tags 		= JSON.parse(fs.readFileSync(config['dataFolder'] + 'tags.json'));
 			for(const name in tags) {
 				for(const exe in tags[name]) {
 					for(const tag of tags[name][exe]) {
