@@ -77,9 +77,9 @@ export default class FocusStats {
 			for(const name in tags) {
 				for(const exe in tags[name]) {
 					for(const tag of tags[name][exe]) {
-						if(data.filter(
+						if(data.find(
 							(elt) => elt.name === name && elt.exe === exe && elt.tag === tag
-						).length > 0) {
+						)) {
 							continue;
 						}
 
