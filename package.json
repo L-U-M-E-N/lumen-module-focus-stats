@@ -5,16 +5,16 @@
   "scripts": {
     "config": "node-gyp configure",
     "build": "node-gyp build",
-    "electron-build": "electron-rebuild -f -w lumen-module-focus-stats -v 18.0.0-alpha.1"
+    "electron-build": "electron-rebuild -f -w lumen-module-focus-stats -v 20.1.1"
   },
   "type": "module",
   "author": "",
   "license": "ISC",
   "gypfile": true,
   "devDependencies": {
-    "electron-rebuild": "^3.2.7"
+    "electron-rebuild": "^3.2.9"
   },
   "dependencies": {
-    "node-abi": "3.8"
+    "node-abi": "^3.24.0"
   }
 }
