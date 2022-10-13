@@ -72,14 +72,24 @@ export default class FocusStats {
 			// TODO: delete data that has been removed on UI
 			// We won't do it now because there's now way to remove tags from UI atm
 
+			const dbTagsMapped = {};
+			for(let row of data) {
+				if(!dbTagsMapped[row.name]) {
+					dbTagsMapped[row.name] = {};
+				}
+				if(!dbTagsMapped[row.name][row.exe]) {
+					dbTagsMapped[row.name][row.exe] = [];
+				}
+
+				dbTagsMapped[row.name][row.exe].push(row.tag);
+			}
+
 			// Insert tags
 			const tags 		= JSON.parse(fs.readFileSync(config['dataFolder'] + 'tags.json'));
 			for(const name in tags) {
 				for(const exe in tags[name]) {
 					for(const tag of tags[name][exe]) {
-						if(data.find(
-							(elt) => elt.name === name && elt.exe === exe && elt.tag === tag
-						)) {
+						if(dbTagsMapped[name] && dbTagsMapped[name][exe] && dbTagsMapped[name][exe].includes(tag)) {
 							continue;
 						}
 
