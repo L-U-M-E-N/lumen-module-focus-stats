@@ -14,9 +14,27 @@ let lastActivityExe = '';
 let lastActivityName = '';
 let lastActivityId = '';
 
+const config = ConfigManager.get('focus-stats', 'cleaner');
+
+function cleanString(str) {
+	for(const value of config['keepEndOnly']) {
+		if(str.endsWith(value)) {
+			return value;
+		}
+	}
+
+	for(const oldVal in config['substitutions']) {
+		const newVal = config['substitutions'][oldVal];
+
+		str = str.replace(oldVal, newVal);
+	}
+
+	return str.substring(0, 1000);
+}
+
 function addNewActivityToHistory() {
-	const currProgramExe  = getActiveProgram.getActiveProgramExe().substring(0, 1000);
-	const currProgramName = getActiveProgram.getActiveProgramName().substring(0, 1000);
+	const currProgramExe  = cleanString(getActiveProgram.getActiveProgramExe());
+	const currProgramName = cleanString(getActiveProgram.getActiveProgramName());
 
 	//console.log(new Date(), 'New activity:', currProgramName, getActiveProgram.getActiveProgramExe());
 	//console.log(new Date(), 'Exe:', getActiveProgram.getActiveProgramExe());

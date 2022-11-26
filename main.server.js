@@ -3,16 +3,135 @@ import fs from 'fs';
 const tags 		= JSON.parse(fs.readFileSync(config['dataFolder'] + 'tags.json'));
 const history 	= JSON.parse(fs.readFileSync(config['dataFolder'] + 'history.json'));
 
+function showData(name, dataset) {
+	console.log(
+		name.padEnd(20, ' ') + '| Data size: ' +
+		Object.values(dataset).length + ' / '+
+		Object.values(dataset).map((elt) => Object.values(elt)).flat(1).length + ' / '+
+		Object.values(dataset).map((elt) => Object.values(elt)).flat(2).length
+	);
+}
+
 export default class FocusStats {
 	static init() {
-		FocusStats.update();
+		(async () => {
+			await FocusStats.cleanDatabaseData();
+			FocusStats.cleanFilesData();
 
-		clearInterval(FocusStats.interval);
-		FocusStats.interval = setInterval(FocusStats.update, 60 * 60 * 1000); // Update every hour
+			await FocusStats.update();
+
+			clearInterval(FocusStats.interval);
+			FocusStats.interval = setInterval(FocusStats.update, 60 * 60 * 1000); // Update every hour
+		})();
 	}
 
 	static close() {
 		clearInterval(FocusStats.interval);
+	}
+
+	static async cleanDatabaseData() {
+		log('Cleaning database data ...')
+
+		for(const oldVal in config['cleaner']['substitutions']) {
+			const newVal = config['cleaner']['substitutions'][oldVal];
+
+			// Rename in history
+			await Database.execQuery(`
+				UPDATE focus_stats
+				SET name = REPLACE(name, '${oldVal}', '${newVal}'), exe = REPLACE(exe, '${oldVal}', '${newVal}')
+				WHERE exe LIKE '%${oldVal}%'
+				OR 	 name LIKE '%${oldVal}%'
+			`);
+
+			// Remove tagging, it'll be re-push if not duplicate with right values
+			await Database.execQuery(`
+				DELETE FROM focus_stats_tags
+					WHERE exe LIKE '%${oldVal}%'
+					OR 	 name LIKE '%${oldVal}%'
+			`);
+		}
+
+		for(const value of config['cleaner']['keepEndOnly']) {
+			// Rename in history
+			await Database.execQuery(`
+				UPDATE focus_stats SET exe = '${value}'
+				WHERE exe LIKE '%${value}'
+			`);
+			await Database.execQuery(`
+				UPDATE focus_stats SET name = '${value}'
+				WHERE name LIKE '%${value}'
+			`);
+
+			// Remove tagging, it'll be re-push if not duplicate with right values
+			await Database.execQuery(`
+				DELETE FROM focus_stats_tags
+					WHERE exe LIKE '%${value}'
+					OR 	 name LIKE '%${value}'
+			`);
+		}
+
+		log('Cleaned database data !')
+	}
+
+	static cleanString(str) {
+		for(const value of config['cleaner']['keepEndOnly']) {
+			if(str.endsWith(value)) {
+				return value;
+			}
+		}
+
+		for(const oldVal in config['cleaner']['substitutions']) {
+			const newVal = config['cleaner']['substitutions'][oldVal];
+
+			str = str.replace(oldVal, newVal);
+		}
+
+		return str;
+	}
+
+	static cleanFilesData() {
+		log('Cleaning file data ...')
+		showData('history', history);
+		showData('tags', tags);
+
+		const newHistory = {};
+
+		for(const exe in history) {
+			const formattedExe = FocusStats.cleanString(exe);
+			if(!newHistory[formattedExe]) {
+				newHistory[formattedExe] = {};
+			}
+
+			for(const name in history[exe]) {
+				const formattedName = FocusStats.cleanString(name);
+				if(!newHistory[formattedExe][formattedName]) {
+					newHistory[formattedExe][formattedName] = [];
+				}
+
+				for(const item of history[exe][name]) {
+					newHistory[formattedExe][formattedName].push(item);
+				}
+			}
+		}
+
+		const newTags = {};
+		for(const exe in tags) {
+			const formattedExe = FocusStats.cleanString(exe);
+
+			for(const name in tags[exe]) {
+				const formattedName = FocusStats.cleanString(name);
+
+				newTags[formattedExe] = newTags[formattedExe] || {};
+				newTags[formattedExe][formattedName] = Array.from(new Set([...(newTags[formattedExe][formattedName] || []), ...tags[exe][name] ]));
+			}
+		}
+
+		fs.writeFileSync(config['dataFolder'] + 'history.json', JSON.stringify(newHistory, null, 4))
+		fs.writeFileSync(config['dataFolder'] + 'tags.json', JSON.stringify(newTags, null, 4))
+
+		showData('history', newHistory);
+		showData('tags', newTags);
+		log('Cleaned file data !')
 	}
 
 	static async pushHistory() {
