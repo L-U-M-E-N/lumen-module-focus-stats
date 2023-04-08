@@ -42,6 +42,11 @@ function addNewActivityToHistory() {
 	const currProgramExe  = cleanString(getActiveProgram.getActiveProgramExe());
 	const currProgramName = cleanString(getActiveProgram.getActiveProgramName());
 
+	// Skip invalid links, TODO: support linux
+	if(currProgramExe.length < 'A:\\a.exe'.length || currProgramExe[1] !== ':' || currProgramExe[2] !== '\\') {
+		return;
+	}
+
 	//console.log(new Date(), 'New activity:', currProgramName, getActiveProgram.getActiveProgramExe());
 	//console.log(new Date(), 'Exe:', getActiveProgram.getActiveProgramExe());
 
