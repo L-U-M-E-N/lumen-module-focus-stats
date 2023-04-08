@@ -80,6 +80,12 @@ export default class FocusStats {
 			}
 		}
 
+		for(const value of config['cleaner']['keepStartOnly']) {
+			if(str.startsWith(value)) {
+				return value;
+			}
+		}
+
 		for(const oldVal in config['cleaner']['substitutions']) {
 			const newVal = config['cleaner']['substitutions'][oldVal];
 

@@ -23,6 +23,12 @@ function cleanString(str) {
 		}
 	}
 
+	for(const value of config['keepStartOnly']) {
+		if(str.startsWith(value)) {
+			return value;
+		}
+	}
+
 	for(const oldVal in config['substitutions']) {
 		const newVal = config['substitutions'][oldVal];
 
