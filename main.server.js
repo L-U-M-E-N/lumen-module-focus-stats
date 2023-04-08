@@ -35,6 +35,8 @@ export default class FocusStats {
 		for(const oldVal in config['cleaner']['substitutions']) {
 			const newVal = config['cleaner']['substitutions'][oldVal];
 
+			log(`	Database - Substitutions "${oldVal}" => "${newVal}"`);
+
 			// Rename in history
 			await Database.execQuery(`
 				UPDATE focus_stats
@@ -52,6 +54,8 @@ export default class FocusStats {
 		}
 
 		for(const value of config['cleaner']['keepEndOnly']) {
+			log(`	Database - Keep end only "${value}"`);
+
 			// Rename in history
 			await Database.execQuery(`
 				UPDATE focus_stats SET exe = '${value}'
@@ -67,6 +71,27 @@ export default class FocusStats {
 				DELETE FROM focus_stats_tags
 					WHERE exe LIKE '%${value}'
 					OR 	 name LIKE '%${value}'
+			`);
+		}
+
+		for(const value of config['cleaner']['keepStartOnly']) {
+			log(`	Database - Keep start only "${value}"`);
+
+			// Rename in history
+			await Database.execQuery(`
+				UPDATE focus_stats SET exe = '${value}'
+				WHERE exe LIKE '${value}%'
+			`);
+			await Database.execQuery(`
+				UPDATE focus_stats SET name = '${value}'
+				WHERE name LIKE '${value}%'
+			`);
+
+			// Remove tagging, it'll be re-push if not duplicate with right values
+			await Database.execQuery(`
+				DELETE FROM focus_stats_tags
+					WHERE exe LIKE '${value}%'
+					OR 	 name LIKE '${value}%'
 			`);
 		}
 
@@ -102,7 +127,9 @@ export default class FocusStats {
 
 		const newHistory = {};
 
+		let i = 0;
 		for(const exe in history) {
+			log(`	File (history) - ${i++} - ${exe}`);
 			const formattedExe = FocusStats.cleanString(exe);
 			if(!newHistory[formattedExe]) {
 				newHistory[formattedExe] = {};
@@ -120,8 +147,10 @@ export default class FocusStats {
 			}
 		}
 
+		i = 0;
 		const newTags = {};
 		for(const exe in tags) {
+			log(`	File (tags) - ${i++} - ${exe}`);
 			const formattedExe = FocusStats.cleanString(exe);
 
 			for(const name in tags[exe]) {
