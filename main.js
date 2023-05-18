@@ -3,14 +3,14 @@ import path from 'path';
 import getActiveProgram from './getActiveProgram.cjs';
 
 let historyCache = [];
-if(AppDataManager.exists('focus-stats', 'historyCache')) {
-	historyCache = AppDataManager.loadObject('focus-stats', 'historyCache');
+if(await AppDataManager.exists('focus-stats', 'historyCache')) {
+	historyCache = await AppDataManager.loadObject('focus-stats', 'historyCache');
 }
-if(!AppDataManager.exists('focus-stats', 'tags')) {
-	AppDataManager.saveObject('focus-stats', 'tags', {});
+if(!(await AppDataManager.exists('focus-stats', 'tags'))) {
+	await AppDataManager.saveObject('focus-stats', 'tags', {});
 }
-if(!AppDataManager.exists('focus-stats', 'history')) {
-	AppDataManager.saveObject('focus-stats', 'history', {});
+if(!(await AppDataManager.exists('focus-stats', 'history'))) {
+	await AppDataManager.saveObject('focus-stats', 'history', {});
 }
 
 const config = ConfigManager.get('focus-stats', 'cleaner');
@@ -62,12 +62,12 @@ function addNewActivityToHistoryCache() {
 	}
 }
 
-function persistCache() {
-	AppDataManager.saveObject('focus-stats', 'historyCache', historyCache);
+async function persistCache() {
+	await AppDataManager.saveObject('focus-stats', 'historyCache', historyCache);
 }
 
-function persistFullData() {
-	const history = AppDataManager.loadObject('focus-stats', 'history');
+async function persistFullData() {
+	const history = await AppDataManager.loadObject('focus-stats', 'history');
 
 	while(historyCache.length > 0) {
 		const item = historyCache.pop();
@@ -94,7 +94,7 @@ function persistFullData() {
 
 	console.log('Saving persistance ... ' + (new Date()).toISOString());
 
-	AppDataManager.saveObject('focus-stats', 'history', history);
+	await AppDataManager.saveObject('focus-stats', 'history', history);
 	persistCache();
 
 	console.log('Saved persistance ! ' + (new Date()).toISOString());
