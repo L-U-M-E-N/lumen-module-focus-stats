@@ -5,7 +5,7 @@
   "scripts": {
     "config": "node-gyp configure",
     "build": "node-gyp build",
-    "electron-build": "electron-rebuild -f -w lumen-module-focus-stats -v 24.3.1"
+    "electron-build": "electron-rebuild -f -w lumen-module-focus-stats -v 25.3.0"
   },
   "type": "module",
   "author": "",
@@ -15,6 +15,6 @@
     "electron-rebuild": "^3.2.9"
   },
   "dependencies": {
-    "node-abi": "^3.40.0"
+    "node-abi": "^3.45.0"
   }
 }
