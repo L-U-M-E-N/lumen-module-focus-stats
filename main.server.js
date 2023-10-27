@@ -40,17 +40,17 @@ export default class FocusStats {
 			// Rename in history
 			await Database.execQuery(`
 				UPDATE focus_stats
-				SET name = REPLACE(name, '${oldVal}', '${newVal}'), exe = REPLACE(exe, '${oldVal}', '${newVal}')
-				WHERE exe LIKE '%${oldVal}%'
-				OR 	 name LIKE '%${oldVal}%'
-			`);
+				SET name = REPLACE(name, $1, $2), exe = REPLACE(exe, $1, $2)
+				WHERE exe LIKE '%' || $1 || '%'
+				OR 	 name LIKE '%' || $1 || '%'
+			`, [oldVal, newVal]);
 
 			// Remove tagging, it'll be re-push if not duplicate with right values
 			await Database.execQuery(`
 				DELETE FROM focus_stats_tags
-					WHERE exe LIKE '%${oldVal}%'
-					OR 	 name LIKE '%${oldVal}%'
-			`);
+					WHERE exe LIKE '%' || $1 || '%'
+					OR 	 name LIKE '%' || $1 || '%'
+			`, [oldVal]);
 		}
 
 		for(const value of config['cleaner']['keepEndOnly']) {
@@ -58,20 +58,20 @@ export default class FocusStats {
 
 			// Rename in history
 			await Database.execQuery(`
-				UPDATE focus_stats SET exe = '${value}'
-				WHERE exe LIKE '%${value}'
-			`);
+				UPDATE focus_stats SET exe = $1
+				WHERE exe LIKE '%' || $1
+			`, [value]);
 			await Database.execQuery(`
-				UPDATE focus_stats SET name = '${value}'
-				WHERE name LIKE '%${value}'
-			`);
+				UPDATE focus_stats SET name = $1
+				WHERE name LIKE '%' || $1
+			`, [value]);
 
 			// Remove tagging, it'll be re-push if not duplicate with right values
 			await Database.execQuery(`
 				DELETE FROM focus_stats_tags
-					WHERE exe LIKE '%${value}'
-					OR 	 name LIKE '%${value}'
-			`);
+					WHERE exe LIKE '%' || $1
+					OR 	 name LIKE '%' || $1
+			`, [value]);
 		}
 
 		for(const value of config['cleaner']['keepStartOnly']) {
@@ -79,20 +79,20 @@ export default class FocusStats {
 
 			// Rename in history
 			await Database.execQuery(`
-				UPDATE focus_stats SET exe = '${value}'
-				WHERE exe LIKE '${value}%'
-			`);
+				UPDATE focus_stats SET exe = $1
+				WHERE exe LIKE $1 || '%'
+			`, [value]);
 			await Database.execQuery(`
-				UPDATE focus_stats SET name = '${value}'
-				WHERE name LIKE '${value}%'
-			`);
+				UPDATE focus_stats SET name = $1
+				WHERE name LIKE $1 || '%'
+			`, [value]);
 
 			// Remove tagging, it'll be re-push if not duplicate with right values
 			await Database.execQuery(`
 				DELETE FROM focus_stats_tags
-					WHERE exe LIKE '${value}%'
-					OR 	 name LIKE '${value}%'
-			`);
+					WHERE exe LIKE $1 || '%'
+					OR 	 name LIKE $1 || '%'
+			`, [value]);
 		}
 
 		log('Cleaned database data !')
