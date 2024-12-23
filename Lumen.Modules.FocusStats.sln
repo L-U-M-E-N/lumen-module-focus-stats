@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Data", "Lumen.Modules.FocusStats.Data\Lumen.Modules.FocusStats.Data.csproj", "{5F5CF6FB-1172-4B28-A4E1-C9CF8DB835CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Module.FocusStats.Business", "Lumen.Module.FocusStats.Business\Lumen.Module.FocusStats.Business.csproj", "{E55FB494-F844-4793-8230-421C6282BBAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Console", "Lumen.Modules.FocusStats.Console\Lumen.Modules.FocusStats.Console.csproj", "{87471AF7-A0DA-4270-A1CB-440FCBFD21D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Module.FocusStats.Business.Tests", "Lumen.Module.FocusStats.Business.Tests\Lumen.Module.FocusStats.Business.Tests.csproj", "{9ED31C3B-6F30-45F9-9B65-CA3A4FEBBFB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Module.FocusStats.Module", "Lumen.Module.FocusStats.Module\Lumen.Module.FocusStats.Module.csproj", "{F28E1C44-102D-4E9F-BEB8-3D1D84748678}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F5CF6FB-1172-4B28-A4E1-C9CF8DB835CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F5CF6FB-1172-4B28-A4E1-C9CF8DB835CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F5CF6FB-1172-4B28-A4E1-C9CF8DB835CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F5CF6FB-1172-4B28-A4E1-C9CF8DB835CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E55FB494-F844-4793-8230-421C6282BBAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E55FB494-F844-4793-8230-421C6282BBAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E55FB494-F844-4793-8230-421C6282BBAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E55FB494-F844-4793-8230-421C6282BBAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87471AF7-A0DA-4270-A1CB-440FCBFD21D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87471AF7-A0DA-4270-A1CB-440FCBFD21D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87471AF7-A0DA-4270-A1CB-440FCBFD21D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87471AF7-A0DA-4270-A1CB-440FCBFD21D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ED31C3B-6F30-45F9-9B65-CA3A4FEBBFB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED31C3B-6F30-45F9-9B65-CA3A4FEBBFB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED31C3B-6F30-45F9-9B65-CA3A4FEBBFB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ED31C3B-6F30-45F9-9B65-CA3A4FEBBFB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F28E1C44-102D-4E9F-BEB8-3D1D84748678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F28E1C44-102D-4E9F-BEB8-3D1D84748678}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F28E1C44-102D-4E9F-BEB8-3D1D84748678}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F28E1C44-102D-4E9F-BEB8-3D1D84748678}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F5E511E-A657-4092-A891-C18AF72A9DEC}
+	EndGlobalSection
+EndGlobal
