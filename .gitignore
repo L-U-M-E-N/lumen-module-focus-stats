@@ -260,6 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 
-Lumen.Modules.FocusStats.Console/history.json
-Lumen.Modules.FocusStats.Console/history_small.json
-Lumen.Modules.FocusStats.Console/rules.json
+Lumen.Modules.FocusStats.ConsoleApp/history.json
+Lumen.Modules.FocusStats.ConsoleApp/history_small.json
+Lumen.Modules.FocusStats.ConsoleApp/rules.json

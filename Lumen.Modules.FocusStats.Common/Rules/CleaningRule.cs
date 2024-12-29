@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Lumen.Module.FocusStats.Business.Rules {
+namespace Lumen.Modules.FocusStats.Common.Rules {
     public class CleaningRule {
         public Regex Regex { get; }
         public string Replacement { get; }
@@ -12,7 +12,7 @@ namespace Lumen.Module.FocusStats.Business.Rules {
             Target = target;
 
             foreach (var test in Tests) {
-                if (test.Value != this.Clean(test.Key)) {
+                if (test.Value != Clean(test.Key)) {
                     throw new InvalidDataException($"Invalid Rule! Test {test.Key} => {test.Value} not validated at runtime!");
                 }
             }

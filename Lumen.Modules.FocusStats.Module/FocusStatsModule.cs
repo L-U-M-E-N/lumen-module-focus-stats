@@ -1,17 +1,20 @@
-﻿using Lumen.Module.FocusStats.Business;
-using Lumen.Module.FocusStats.Business.Rules;
+﻿using Lumen.Modules.FocusStats.Common;
+using Lumen.Modules.FocusStats.Common.Rules;
+using Lumen.Modules.FocusStats.Data;
 using Lumen.Modules.Sdk;
+
+using Microsoft.EntityFrameworkCore;
 
 using System.Text.Json;
 
-namespace Lumen.Module.FocusStats.Module {
+namespace Lumen.Modules.FocusStats.Module {
     public class FocusStatsModule : LumenModuleBase {
         private static readonly List<CleaningRule> CleaningRules = [];
         private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             PropertyNameCaseInsensitive = true,
         };
 
-        public FocusStatsModule(ILogger<FocusStatsModule> logger) : base(LumenModuleRunsOnFlag.UI | LumenModuleRunsOnFlag.API, logger) {
+        public FocusStatsModule(LumenModuleRunsOnFlag runsOn, ILogger<LumenModuleBase> logger) : base(runsOn, logger) {
 
         }
 
@@ -67,6 +70,16 @@ namespace Lumen.Module.FocusStats.Module {
 
         public override async Task ShutdownAsync() {
             // Nothing to do here
+        }
+
+        public static new void SetupServices(LumenModuleRunsOnFlag currentEnv, IServiceCollection serviceCollection, string? postgresConnectionString) {
+            if (currentEnv == LumenModuleRunsOnFlag.API) {
+                serviceCollection.AddDbContext<FocusStatsContext>(o => o.UseNpgsql(postgresConnectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", FocusStatsContext.SCHEMA_NAME)));
+            }
+        }
+
+        public override Type GetDatabaseContextType() {
+            return typeof(FocusStatsContext);
         }
     }
 }

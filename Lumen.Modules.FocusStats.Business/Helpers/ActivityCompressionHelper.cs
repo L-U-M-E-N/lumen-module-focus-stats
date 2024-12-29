@@ -1,4 +1,6 @@
-﻿namespace Lumen.Module.FocusStats.Business.Helpers {
+﻿using Lumen.Modules.FocusStats.Common;
+
+namespace Lumen.Modules.FocusStats.Business.Helpers {
     public static class ActivityCompressionHelper {
         public static void CompressData(this IList<UserFocusedActivity> activities) {
             for (int i = 0; i < activities.Count - 1; i++) {

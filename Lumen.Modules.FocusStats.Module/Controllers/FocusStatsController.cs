@@ -1,8 +1,8 @@
-﻿using Lumen.Module.FocusStats.Business;
+﻿using Lumen.Modules.FocusStats.Common;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lumen.Module.FocusStats.Module.Controllers {
+namespace Lumen.Modules.FocusStats.Module.Controllers {
     [ApiController]
     [Route("[controller]")]
     public class FocusStatsController : ControllerBase {

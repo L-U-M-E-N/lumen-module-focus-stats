@@ -1,6 +1,6 @@
-﻿using Lumen.Module.FocusStats.Business;
-using Lumen.Module.FocusStats.Business.Helpers;
-using Lumen.Module.FocusStats.Business.Rules;
+﻿using Lumen.Modules.FocusStats.Business.Helpers;
+using Lumen.Modules.FocusStats.Common;
+using Lumen.Modules.FocusStats.Common.Rules;
 
 using System.Text.Json;
 
@@ -58,7 +58,7 @@ namespace Lumen.Modules.FocusStats.ConsoleApp {
             var distinctNames = dataAsList.DistinctBy(x => x.ProgramName).Select(x => x.ProgramName).ToList();
             Console.WriteLine($"[{DateTime.Now}] After - Distinct Names: {distinctNames.Count} lines.");
 
-            ActivityCompressionHelper.CompressData(dataAsList);
+            dataAsList.CompressData();
 
             Console.WriteLine($"[{DateTime.Now}] Final - Total: {dataAsList.Count} lines.");
             Console.WriteLine($"[{DateTime.Now}] Final - Distinct Exe: {dataAsList.DistinctBy(x => x.ProgramExe).Count()} lines.");

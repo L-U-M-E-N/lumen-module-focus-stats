@@ -1,11 +1,11 @@
-﻿using Lumen.Module.FocusStats.Business.Rules;
+﻿using Lumen.Modules.FocusStats.Common.Rules;
 
-namespace Lumen.Module.FocusStats.Business {
+namespace Lumen.Modules.FocusStats.Common {
     public class UserFocusedActivity {
-        public DateTime StartTime { get; }
+        public DateTime StartTime { get; set; }
         public int SecondsDuration { get; set; }
-        public string ProgramExe { get; }
-        public string ProgramName { get; }
+        public string ProgramExe { get; set; }
+        public string ProgramName { get; set; }
 
         public static UserFocusedActivity CreateActivityAsync(IEnumerable<CleaningRule> replacementRules, DateTime start, int duration, string exe, string name) {
             name = CleanString(replacementRules, name, RuleTarget.Name);
@@ -21,6 +21,8 @@ namespace Lumen.Module.FocusStats.Business {
 
             return new(start, duration, exe, name);
         }
+
+        public UserFocusedActivity() { }
 
         protected UserFocusedActivity(DateTime start, int duration, string exe, string name) {
             StartTime = start;

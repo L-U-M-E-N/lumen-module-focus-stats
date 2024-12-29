@@ -7,7 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Rules\Tagging\" />
+		<ProjectReference Include="..\Lumen.Modules.FocusStats.Data\Lumen.Modules.FocusStats.Data.csproj" />
 	</ItemGroup>
-
 </Project>

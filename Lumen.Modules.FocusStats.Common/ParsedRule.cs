@@ -1,4 +1,4 @@
-﻿namespace Lumen.Module.FocusStats.Business {
+﻿namespace Lumen.Modules.FocusStats.Common {
     public class ParsedRule {
         public string Replacement { get; set; } = null!;
         public string Target { get; set; } = null!;

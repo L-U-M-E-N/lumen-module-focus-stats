@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Lumen.Module.FocusStats.Module": {
+    "Lumen.Modules.FocusStats.Module": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

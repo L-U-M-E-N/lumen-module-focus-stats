@@ -7,12 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Lumen.Modules.Sdk" Version="0.3.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-		<PackageReference Include="Lumen.Modules.Sdk" Version="0.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Lumen.Module.FocusStats.Business\Lumen.Module.FocusStats.Business.csproj" />
+		<ProjectReference Include="..\Lumen.Modules.FocusStats.Business\Lumen.Modules.FocusStats.Business.csproj" />
 	</ItemGroup>
 
 </Project>

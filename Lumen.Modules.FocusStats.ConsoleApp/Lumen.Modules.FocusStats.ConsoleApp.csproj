@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Lumen.Module.FocusStats.Business\Lumen.Module.FocusStats.Business.csproj" />
+		<ProjectReference Include="..\Lumen.Modules.FocusStats.Business\Lumen.Modules.FocusStats.Business.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

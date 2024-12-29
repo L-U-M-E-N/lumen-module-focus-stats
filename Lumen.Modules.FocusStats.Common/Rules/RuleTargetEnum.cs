@@ -1,4 +1,4 @@
-﻿namespace Lumen.Module.FocusStats.Business.Rules {
+﻿namespace Lumen.Modules.FocusStats.Common.Rules {
     public enum RuleTarget {
         Exe,
         Name,

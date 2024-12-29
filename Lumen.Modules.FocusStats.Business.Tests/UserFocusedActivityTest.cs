@@ -1,6 +1,7 @@
-using Lumen.Module.FocusStats.Business.Rules;
+using Lumen.Modules.FocusStats.Common;
+using Lumen.Modules.FocusStats.Common.Rules;
 
-namespace Lumen.Module.FocusStats.Business.Tests {
+namespace Lumen.Modules.FocusStats.Business.Tests {
     public class UserFocusedActivityTest {
         [Fact]
         public void UserFocusedActivity_Standard_0_Rules() {

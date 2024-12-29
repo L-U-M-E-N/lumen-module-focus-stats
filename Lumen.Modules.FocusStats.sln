@@ -5,13 +5,15 @@ VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Data", "Lumen.Modules.FocusStats.Data\Lumen.Modules.FocusStats.Data.csproj", "{5F5CF6FB-1172-4B28-A4E1-C9CF8DB835CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Module.FocusStats.Business", "Lumen.Module.FocusStats.Business\Lumen.Module.FocusStats.Business.csproj", "{E55FB494-F844-4793-8230-421C6282BBAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Business", "Lumen.Modules.FocusStats.Business\Lumen.Modules.FocusStats.Business.csproj", "{E55FB494-F844-4793-8230-421C6282BBAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Console", "Lumen.Modules.FocusStats.Console\Lumen.Modules.FocusStats.Console.csproj", "{87471AF7-A0DA-4270-A1CB-440FCBFD21D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.ConsoleApp", "Lumen.Modules.FocusStats.ConsoleApp\Lumen.Modules.FocusStats.ConsoleApp.csproj", "{87471AF7-A0DA-4270-A1CB-440FCBFD21D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Module.FocusStats.Business.Tests", "Lumen.Module.FocusStats.Business.Tests\Lumen.Module.FocusStats.Business.Tests.csproj", "{9ED31C3B-6F30-45F9-9B65-CA3A4FEBBFB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Business.Tests", "Lumen.Modules.FocusStats.Business.Tests\Lumen.Modules.FocusStats.Business.Tests.csproj", "{9ED31C3B-6F30-45F9-9B65-CA3A4FEBBFB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Module.FocusStats.Module", "Lumen.Module.FocusStats.Module\Lumen.Module.FocusStats.Module.csproj", "{F28E1C44-102D-4E9F-BEB8-3D1D84748678}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Module", "Lumen.Modules.FocusStats.Module\Lumen.Modules.FocusStats.Module.csproj", "{F28E1C44-102D-4E9F-BEB8-3D1D84748678}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Common", "Lumen.Modules.FocusStats.Common\Lumen.Modules.FocusStats.Common.csproj", "{C2D828FD-C03E-43D8-B762-2B09C74E6496}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F28E1C44-102D-4E9F-BEB8-3D1D84748678}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F28E1C44-102D-4E9F-BEB8-3D1D84748678}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F28E1C44-102D-4E9F-BEB8-3D1D84748678}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2D828FD-C03E-43D8-B762-2B09C74E6496}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2D828FD-C03E-43D8-B762-2B09C74E6496}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2D828FD-C03E-43D8-B762-2B09C74E6496}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2D828FD-C03E-43D8-B762-2B09C74E6496}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
