@@ -5,19 +5,24 @@ namespace Lumen.Modules.FocusStats.Business.Tests {
     public class UserFocusedActivityTest {
         [Fact]
         public void UserFocusedActivity_Standard_0_Rules() {
+            var seconds = 42;
+            var exe = "exe";
+            var name = "name";
+            var startTime = DateTime.UtcNow;
+
             var activity = UserFocusedActivity.CreateActivityAsync(
                 [],
-                DateTime.UtcNow,
-                42,
-                "exe",
-                "name"
+                startTime,
+                seconds,
+                exe,
+                name
             );
 
-            activity.Should().NotBeNull();
-            activity.SecondsDuration.Should().Be(42);
-            activity.ProgramName.Should().Be("name");
-            activity.ProgramExe.Should().Be("exe");
-            activity.StartTime.Should().BeBefore(DateTime.UtcNow);
+            Assert.NotNull(activity);
+            Assert.Equal(seconds, activity.SecondsDuration);
+            Assert.Equal(name, activity.ProgramName);
+            Assert.Equal(exe, activity.ProgramExe);
+            Assert.Equal(startTime, activity.StartTime);
         }
 
         [Fact]
@@ -35,15 +40,15 @@ namespace Lumen.Modules.FocusStats.Business.Tests {
 
         [Fact]
         public void UserFocusedActivity_EmptyName() {
-            Assert.Throws<ArgumentNullException>(() => {
-                UserFocusedActivity.CreateActivityAsync(
-                    [],
-                    DateTime.UtcNow,
-                    42,
-                    "exe",
-                    ""
-                );
-            });
+            var activity = UserFocusedActivity.CreateActivityAsync(
+                 [],
+                 DateTime.UtcNow,
+                 42,
+                 "exe",
+                 ""
+             );
+
+            Assert.Equal("?", activity.ProgramName);
         }
 
         private static readonly IEnumerable<CleaningRule> Rules = [
@@ -63,19 +68,22 @@ namespace Lumen.Modules.FocusStats.Business.Tests {
         [InlineData("xyzABC", "xyzABC", "xyzABC", "xyzDEF")]
         [Theory]
         public void UserFocusedActivity_Standard_4_Rules(string inputExe, string inputName, string expectedExe, string expectedName) {
+            var seconds = 42;
+            var startTime = DateTime.UtcNow;
+
             var activity = UserFocusedActivity.CreateActivityAsync(
                 Rules,
-                DateTime.UtcNow,
-                42,
+                startTime,
+                seconds,
                 inputExe,
                 inputName
             );
 
-            activity.Should().NotBeNull();
-            activity.SecondsDuration.Should().Be(42);
-            activity.ProgramName.Should().Be(expectedName);
-            activity.ProgramExe.Should().Be(expectedExe);
-            activity.StartTime.Should().BeBefore(DateTime.UtcNow);
+            Assert.NotNull(activity);
+            Assert.Equal(seconds, activity.SecondsDuration);
+            Assert.Equal(expectedName, activity.ProgramName);
+            Assert.Equal(expectedExe, activity.ProgramExe);
+            Assert.Equal(startTime, activity.StartTime);
         }
     }
 }
