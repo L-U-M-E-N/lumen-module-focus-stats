@@ -14,7 +14,7 @@ namespace Lumen.Modules.FocusStats.Module {
             PropertyNameCaseInsensitive = true,
         };
 
-        public FocusStatsModule(LumenModuleRunsOnFlag runsOn, ILogger<LumenModuleBase> logger) : base(runsOn, logger) {
+        public FocusStatsModule(LumenModuleRunsOnFlag runsOn, IEnumerable<ConfigEntry> configEntries, ILogger<LumenModuleBase> logger) : base(runsOn, configEntries, logger) {
 
         }
 
