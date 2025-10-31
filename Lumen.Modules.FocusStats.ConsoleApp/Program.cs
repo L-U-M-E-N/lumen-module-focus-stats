@@ -55,17 +55,19 @@ namespace Lumen.Modules.FocusStats.ConsoleApp {
                 }
             }
 
+            var distinctExe = dataAsList.Select(x => x.AppOrExe).Distinct().Order();
+
             Console.WriteLine($"[{DateTime.Now}] Before - Total: {counter} lines.");
             Console.WriteLine($"[{DateTime.Now}] Before - Distinct Exe: {data.Count} lines.");
             Console.WriteLine($"[{DateTime.Now}] Before - Distinct Names: {data.SelectMany(x => x.Value.Keys).Distinct().Count()} lines.");
             Console.WriteLine($"[{DateTime.Now}] After - Total: {dataAsList.Count} lines.");
-            Console.WriteLine($"[{DateTime.Now}] After - Distinct Exe: {dataAsList.DistinctBy(x => x.AppOrExe).Count()} lines.");
+            Console.WriteLine($"[{DateTime.Now}] After - Distinct Exe: {distinctExe.Count()} lines.");
             var distinctNames = dataAsList.DistinctBy(x => x.Name).Select(x => x.Name).ToList();
             Console.WriteLine($"[{DateTime.Now}] After - Distinct Names: {distinctNames.Count} lines.");
 
             Console.WriteLine($"[{DateTime.Now}] Writing distinct names and exe ...");
 
-            File.WriteAllText("distinct_exe.json", JsonSerializer.Serialize(dataAsList.Select(x => x.AppOrExe).Distinct()));
+            File.WriteAllText("distinct_exe.json", JsonSerializer.Serialize(distinctExe));
             File.WriteAllText("distinct_names.json", JsonSerializer.Serialize(distinctNames));
 
             Console.WriteLine($"[{DateTime.Now}] Writing distinct names and exe ... Done!");
