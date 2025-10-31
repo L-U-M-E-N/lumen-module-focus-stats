@@ -4,10 +4,12 @@ namespace Lumen.Modules.FocusStats.Common {
     public class UserFocusedActivity {
         public DateTime StartTime { get; set; }
         public int SecondsDuration { get; set; }
-        public string ProgramExe { get; set; }
-        public string ProgramName { get; set; }
+        public string AppOrExe { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string Device { get; set; } = null!;
+        public string[] Tags { get; set; } = [];
 
-        public static UserFocusedActivity CreateActivityAsync(IEnumerable<CleaningRule> replacementRules, DateTime start, int duration, string exe, string name) {
+        public static UserFocusedActivity CreateActivityAsync(IEnumerable<CleaningRule> replacementRules, DateTime start, int duration, string exe, string name, string device) {
             name = CleanString(replacementRules, name, RuleTarget.Name);
             exe = CleanString(replacementRules, exe, RuleTarget.Exe);
 
@@ -19,23 +21,25 @@ namespace Lumen.Modules.FocusStats.Common {
                 name = "?";
             }
 
-            return new(start, duration, exe, name);
+            return new(start, duration, exe, name, device);
         }
 
         public UserFocusedActivity() { }
 
-        protected UserFocusedActivity(DateTime start, int duration, string exe, string name) {
+        protected UserFocusedActivity(DateTime start, int duration, string exe, string name, string device) {
             StartTime = start;
             SecondsDuration = duration;
-            ProgramExe = exe;
-            ProgramName = name;
+            AppOrExe = exe;
+            Name = name;
+            Device = device;
+
         }
 
         private static string CleanString(IEnumerable<CleaningRule> rules, string input, RuleTarget targetType) {
             string output = input.Trim();
 
             foreach (var rule in rules) {
-                if (rule.GetTarget() == targetType || rule.GetTarget() == RuleTarget.Both) {
+                if (rule.Target == targetType || rule.Target == RuleTarget.Both) {
                     output = rule.Clean(output);
                 }
             }

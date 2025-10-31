@@ -8,20 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace Lumen.Modules.FocusStats.Module {
-    public class FocusStatsModule : LumenModuleBase {
+    public class FocusStatsModule(LumenModuleRunsOnFlag runsOn, IEnumerable<ConfigEntry> configEntries, ILogger<LumenModuleBase> logger) : LumenModuleBase(runsOn, configEntries, logger) {
         private static readonly List<CleaningRule> CleaningRules = [];
         private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             PropertyNameCaseInsensitive = true,
         };
 
-        public FocusStatsModule(LumenModuleRunsOnFlag runsOn, IEnumerable<ConfigEntry> configEntries, ILogger<LumenModuleBase> logger) : base(runsOn, configEntries, logger) {
-
-        }
-
         public override async Task InitAsync(LumenModuleRunsOnFlag currentEnv) {
-            logger.LogTrace($"[{DateTime.Now}] Loading settings ...");
+            logger.LogTrace("[{Date}] Loading settings ...", DateTime.Now);
 
-            var rulesDict = JsonSerializer.Deserialize<Dictionary<string, ParsedRule>>(File.ReadAllText("rules.json"), jsonSerializerOptions);
+            var rulesDict = JsonSerializer.Deserialize<Dictionary<string, ParsedCleaningRule>>(File.ReadAllText("rules.json"), jsonSerializerOptions)!;
             foreach (var item in rulesDict) {
                 CleaningRules.Add(new CleaningRule(item.Key, item.Value.Replacement, Enum.Parse<RuleTarget>(item.Value.Target), item.Value.Tests));
             }

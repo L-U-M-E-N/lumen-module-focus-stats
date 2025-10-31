@@ -7,8 +7,8 @@ namespace Lumen.Modules.FocusStats.Business.Helpers {
                 var newStart = activities[i].StartTime.AddSeconds(activities[i].SecondsDuration);
 
                 if (
-                    activities[i].ProgramName == activities[i + 1].ProgramName &&
-                    activities[i].ProgramExe == activities[i + 1].ProgramExe &&
+                    activities[i].Name == activities[i + 1].Name &&
+                    activities[i].AppOrExe == activities[i + 1].AppOrExe &&
                     newStart.CompareTo(activities[i].StartTime) == 0
                     ) {
 

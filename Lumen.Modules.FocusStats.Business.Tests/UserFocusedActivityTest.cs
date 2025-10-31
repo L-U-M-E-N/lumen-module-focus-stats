@@ -15,13 +15,14 @@ namespace Lumen.Modules.FocusStats.Business.Tests {
                 startTime,
                 seconds,
                 exe,
-                name
+                name,
+                "Device"
             );
 
             Assert.NotNull(activity);
             Assert.Equal(seconds, activity.SecondsDuration);
-            Assert.Equal(name, activity.ProgramName);
-            Assert.Equal(exe, activity.ProgramExe);
+            Assert.Equal(name, activity.Name);
+            Assert.Equal(exe, activity.AppOrExe);
             Assert.Equal(startTime, activity.StartTime);
         }
 
@@ -33,7 +34,8 @@ namespace Lumen.Modules.FocusStats.Business.Tests {
                     DateTime.UtcNow,
                     42,
                     "",
-                    "name"
+                    "name",
+                    "Device"
                 );
             });
         }
@@ -45,10 +47,11 @@ namespace Lumen.Modules.FocusStats.Business.Tests {
                  DateTime.UtcNow,
                  42,
                  "exe",
-                 ""
+                 "",
+                 "Device"
              );
 
-            Assert.Equal("?", activity.ProgramName);
+            Assert.Equal("?", activity.Name);
         }
 
         private static readonly IEnumerable<CleaningRule> Rules = [
@@ -76,13 +79,14 @@ namespace Lumen.Modules.FocusStats.Business.Tests {
                 startTime,
                 seconds,
                 inputExe,
-                inputName
+                inputName,
+                "Device"
             );
 
             Assert.NotNull(activity);
             Assert.Equal(seconds, activity.SecondsDuration);
-            Assert.Equal(expectedName, activity.ProgramName);
-            Assert.Equal(expectedExe, activity.ProgramExe);
+            Assert.Equal(expectedName, activity.Name);
+            Assert.Equal(expectedExe, activity.AppOrExe);
             Assert.Equal(startTime, activity.StartTime);
         }
     }

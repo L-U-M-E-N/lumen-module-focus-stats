@@ -1,29 +1,23 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace Lumen.Modules.FocusStats.Common.Rules {
-    public class CleaningRule {
+    public class TaggingRule {
         public Regex Regex { get; }
-        public string Replacement { get; }
+        public IEnumerable<string> Tags { get; }
         public RuleTarget Target { get; }
-        public Dictionary<string, string> Tests { get; }
+        public Dictionary<string, bool> Tests { get; }
 
-        public CleaningRule(string regexp, string replacement, RuleTarget target, Dictionary<string, string> tests) {
+        public TaggingRule(string regexp, IEnumerable<string> tags, RuleTarget target, Dictionary<string, bool> tests) {
             Regex = new Regex(regexp, RegexOptions.Compiled);
-            Replacement = replacement;
+            Tags = tags;
             Target = target;
             Tests = tests;
 
             foreach (var test in Tests) {
-                if (test.Value != Clean(test.Key)) {
+                if (Regex.IsMatch(test.Key) != test.Value) {
                     throw new InvalidDataException($"Invalid Rule! Test {test.Key} => {test.Value} not validated at runtime!");
                 }
             }
-        }
-
-        public string Clean(string input) {
-            var ret = Regex.Replace(input, Replacement);
-
-            return ret;
         }
     }
 }

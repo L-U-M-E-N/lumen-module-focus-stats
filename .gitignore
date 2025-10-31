@@ -263,3 +263,6 @@ __pycache__/
 Lumen.Modules.FocusStats.ConsoleApp/history.json
 Lumen.Modules.FocusStats.ConsoleApp/history_small.json
 Lumen.Modules.FocusStats.ConsoleApp/rules.json
+Lumen.Modules.FocusStats.ConsoleApp/tagging_rules.json
+
+Lumen.Modules.FocusStats.ConsoleApp/renaming_rules.json

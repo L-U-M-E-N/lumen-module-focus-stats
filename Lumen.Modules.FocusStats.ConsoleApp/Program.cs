@@ -7,6 +7,7 @@ using System.Text.Json;
 namespace Lumen.Modules.FocusStats.ConsoleApp {
     internal class Program {
         private static readonly List<CleaningRule> CleaningRules = [];
+        private static readonly List<TaggingRule> TaggingRules = [];
         private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
             PropertyNameCaseInsensitive = true,
         };
@@ -14,11 +15,15 @@ namespace Lumen.Modules.FocusStats.ConsoleApp {
         static void Main(string[] args) {
             Console.WriteLine($"[{DateTime.Now}] Loading settings ...");
 
-            var rulesDict = JsonSerializer.Deserialize<Dictionary<string, ParsedRule>>(File.ReadAllText("rules.json"), jsonSerializerOptions);
-            foreach (var item in rulesDict) {
+            var cleaningRulesDict = JsonSerializer.Deserialize<Dictionary<string, ParsedCleaningRule>>(File.ReadAllText("renaming_rules.json"), jsonSerializerOptions);
+            foreach (var item in cleaningRulesDict) {
                 CleaningRules.Add(new CleaningRule(item.Key, item.Value.Replacement, Enum.Parse<RuleTarget>(item.Value.Target), item.Value.Tests));
             }
 
+            var taggingRulesDict = JsonSerializer.Deserialize<Dictionary<string, ParsedTaggingRule>>(File.ReadAllText("tagging_rules.json"), jsonSerializerOptions)!;
+            foreach (var item in taggingRulesDict) {
+                TaggingRules.Add(new TaggingRule(item.Key, item.Value.Tags, Enum.Parse<RuleTarget>(item.Value.Target), item.Value.Tests));
+            }
 
             Console.WriteLine($"[{DateTime.Now}] Loading data - Reading file ...");
 
@@ -40,7 +45,7 @@ namespace Lumen.Modules.FocusStats.ConsoleApp {
                 foreach (var itemName in data[itemExe.Key]) {
                     foreach (var item in data[itemExe.Key][itemName.Key]) {
                         try {
-                            dataAsList.Add(UserFocusedActivity.CreateActivityAsync(CleaningRules, item.Date, item.Duration, itemExe.Key, itemName.Key));
+                            dataAsList.Add(UserFocusedActivity.CreateActivityAsync(CleaningRules, item.Date, item.Duration, itemExe.Key, itemName.Key, "Unknown"));
                         } catch {
                             Console.WriteLine($"[{itemExe.Key}] [{itemName.Key}] Invalid activity!");
                         }
@@ -54,15 +59,44 @@ namespace Lumen.Modules.FocusStats.ConsoleApp {
             Console.WriteLine($"[{DateTime.Now}] Before - Distinct Exe: {data.Count} lines.");
             Console.WriteLine($"[{DateTime.Now}] Before - Distinct Names: {data.SelectMany(x => x.Value.Keys).Distinct().Count()} lines.");
             Console.WriteLine($"[{DateTime.Now}] After - Total: {dataAsList.Count} lines.");
-            Console.WriteLine($"[{DateTime.Now}] After - Distinct Exe: {dataAsList.DistinctBy(x => x.ProgramExe).Count()} lines.");
-            var distinctNames = dataAsList.DistinctBy(x => x.ProgramName).Select(x => x.ProgramName).ToList();
+            Console.WriteLine($"[{DateTime.Now}] After - Distinct Exe: {dataAsList.DistinctBy(x => x.AppOrExe).Count()} lines.");
+            var distinctNames = dataAsList.DistinctBy(x => x.Name).Select(x => x.Name).ToList();
             Console.WriteLine($"[{DateTime.Now}] After - Distinct Names: {distinctNames.Count} lines.");
+
+            Console.WriteLine($"[{DateTime.Now}] Writing distinct names and exe ...");
+
+            File.WriteAllText("distinct_exe.json", JsonSerializer.Serialize(dataAsList.Select(x => x.AppOrExe).Distinct()));
+            File.WriteAllText("distinct_names.json", JsonSerializer.Serialize(distinctNames));
+
+            Console.WriteLine($"[{DateTime.Now}] Writing distinct names and exe ... Done!");
+
+            Console.WriteLine($"[{DateTime.Now}] Tagging data ...");
+
+            ulong okCounter = 0;
+            ulong totalCounter = 0;
+            foreach (var itemExe in data) {
+                var matchingExe = TaggingRules.Any((t) => t.Regex.IsMatch(itemExe.Key) && (t.Target == RuleTarget.Both || t.Target == RuleTarget.Exe));
+
+                foreach (var itemName in data[itemExe.Key]) {
+                    var matchingName = TaggingRules.Any((t) => t.Regex.IsMatch(itemName.Key) && (t.Target == RuleTarget.Both || t.Target == RuleTarget.Name));
+
+                    foreach (var item in data[itemExe.Key][itemName.Key]) {
+                        if (matchingExe || matchingName) {
+                            okCounter += (ulong)item.Duration;
+                        }
+                        totalCounter += (ulong)item.Duration;
+                    }
+                }
+            }
+
+            Console.WriteLine($"[{DateTime.Now}] Tagging data ... Done!");
+            Console.WriteLine($"[{DateTime.Now}] Tagging data ... Results (time): {okCounter}/{totalCounter} ({100 * okCounter / totalCounter}%)");
 
             dataAsList.CompressData();
 
             Console.WriteLine($"[{DateTime.Now}] Final - Total: {dataAsList.Count} lines.");
-            Console.WriteLine($"[{DateTime.Now}] Final - Distinct Exe: {dataAsList.DistinctBy(x => x.ProgramExe).Count()} lines.");
-            Console.WriteLine($"[{DateTime.Now}] Final - Distinct Names: {dataAsList.DistinctBy(x => x.ProgramName).Count()} lines.");
+            Console.WriteLine($"[{DateTime.Now}] Final - Distinct Exe: {dataAsList.DistinctBy(x => x.AppOrExe).Count()} lines.");
+            Console.WriteLine($"[{DateTime.Now}] Final - Distinct Names: {dataAsList.DistinctBy(x => x.Name).Count()} lines.");
 
             File.WriteAllText("history_cleaned.json", JsonSerializer.Serialize(dataAsList));
 
