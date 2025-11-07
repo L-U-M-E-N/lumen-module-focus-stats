@@ -1,0 +1,20 @@
+name: .NET
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: L-U-M-E-N/reusable-workflow/.github/workflows/build-module.yaml@6.0.1
+    with:
+      SONAR_KEY: lumen-module-focusstats
+      MODULE_NAME: Lumen.Modules.FocusStats
+      RELEASE_FILES_LOCATION: Lumen.Modules.FocusStats.Module/bin/Release/net9.0/*.dll
+      CSPROJ: Lumen.Modules.FocusStats.Module/Lumen.Modules.FocusStats.Module.csproj
+      RUN_TESTS: 'false'
+
+    secrets:
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
