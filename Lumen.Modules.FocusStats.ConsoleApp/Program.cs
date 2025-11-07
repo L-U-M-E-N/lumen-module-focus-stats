@@ -1,5 +1,4 @@
-﻿using Lumen.Modules.FocusStats.Business.Helpers;
-using Lumen.Modules.FocusStats.Common;
+﻿using Lumen.Modules.FocusStats.Common;
 using Lumen.Modules.FocusStats.Common.Rules;
 
 using System.Text.Json;
@@ -22,7 +21,7 @@ namespace Lumen.Modules.FocusStats.ConsoleApp {
 
             var taggingRulesDict = JsonSerializer.Deserialize<Dictionary<string, ParsedTaggingRule>>(File.ReadAllText("tagging_rules.json"), jsonSerializerOptions)!;
             foreach (var item in taggingRulesDict) {
-                TaggingRules.Add(new TaggingRule(item.Key, item.Value.Tags, Enum.Parse<RuleTarget>(item.Value.Target), item.Value.Tests));
+                TaggingRules.Add(new TaggingRule(item.Key, item.Value.Tags.ToList(), Enum.Parse<RuleTarget>(item.Value.Target), item.Value.Tests));
             }
 
             Console.WriteLine($"[{DateTime.Now}] Loading data - Reading file ...");
@@ -94,11 +93,11 @@ namespace Lumen.Modules.FocusStats.ConsoleApp {
             Console.WriteLine($"[{DateTime.Now}] Tagging data ... Done!");
             Console.WriteLine($"[{DateTime.Now}] Tagging data ... Results (time): {okCounter}/{totalCounter} ({100 * okCounter / totalCounter}%)");
 
-            dataAsList.CompressData();
+            /*dataAsList.CompressData();
 
             Console.WriteLine($"[{DateTime.Now}] Final - Total: {dataAsList.Count} lines.");
             Console.WriteLine($"[{DateTime.Now}] Final - Distinct Exe: {dataAsList.DistinctBy(x => x.AppOrExe).Count()} lines.");
-            Console.WriteLine($"[{DateTime.Now}] Final - Distinct Names: {dataAsList.DistinctBy(x => x.Name).Count()} lines.");
+            Console.WriteLine($"[{DateTime.Now}] Final - Distinct Names: {dataAsList.DistinctBy(x => x.Name).Count()} lines.");*/
 
             File.WriteAllText("history_cleaned.json", JsonSerializer.Serialize(dataAsList));
 

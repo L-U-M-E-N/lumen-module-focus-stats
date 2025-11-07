@@ -2,12 +2,14 @@
 
 namespace Lumen.Modules.FocusStats.Common.Rules {
     public class TaggingRule {
-        public Regex Regex { get; }
-        public IEnumerable<string> Tags { get; }
+        public Guid Id { get; set; }
+        public Regex Regex { get; } = null!;
+        public ICollection<string> Tags { get; } = null!;
         public RuleTarget Target { get; }
-        public Dictionary<string, bool> Tests { get; }
+        public Dictionary<string, bool> Tests { get; } = null!;
 
-        public TaggingRule(string regexp, IEnumerable<string> tags, RuleTarget target, Dictionary<string, bool> tests) {
+        protected TaggingRule() { }
+        public TaggingRule(string regexp, ICollection<string> tags, RuleTarget target, Dictionary<string, bool> tests) {
             Regex = new Regex(regexp, RegexOptions.Compiled);
             Tags = tags;
             Target = target;

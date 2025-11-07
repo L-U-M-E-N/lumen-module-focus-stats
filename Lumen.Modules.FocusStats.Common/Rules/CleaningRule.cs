@@ -2,11 +2,13 @@
 
 namespace Lumen.Modules.FocusStats.Common.Rules {
     public class CleaningRule {
-        public Regex Regex { get; }
-        public string Replacement { get; }
+        public Guid Id { get; set; }
+        public Regex Regex { get; } = null!;
+        public string Replacement { get; } = null!;
         public RuleTarget Target { get; }
-        public Dictionary<string, string> Tests { get; }
+        public Dictionary<string, string> Tests { get; } = null!;
 
+        protected CleaningRule() { }
         public CleaningRule(string regexp, string replacement, RuleTarget target, Dictionary<string, string> tests) {
             Regex = new Regex(regexp, RegexOptions.Compiled);
             Replacement = replacement;

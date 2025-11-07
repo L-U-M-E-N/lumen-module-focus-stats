@@ -7,7 +7,7 @@ namespace Lumen.Modules.FocusStats.Common {
         public string AppOrExe { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Device { get; set; } = null!;
-        public string[] Tags { get; set; } = [];
+        public List<string> Tags { get; set; } = [];
 
         public static UserFocusedActivity CreateActivityAsync(IEnumerable<CleaningRule> replacementRules, DateTime start, int duration, string exe, string name, string device) {
             name = CleanString(replacementRules, name, RuleTarget.Name);
@@ -45,6 +45,30 @@ namespace Lumen.Modules.FocusStats.Common {
             }
 
             return output;
+        }
+
+        public void ApplyNewCleaningRule(CleaningRule rule) {
+            if ((rule.Target == RuleTarget.Exe || rule.Target == RuleTarget.Both) && rule.Regex.IsMatch(AppOrExe)) {
+                AppOrExe = rule.Clean(AppOrExe);
+            }
+            if ((rule.Target == RuleTarget.Name || rule.Target == RuleTarget.Both) && rule.Regex.IsMatch(Name)) {
+                Name = rule.Clean(Name);
+            }
+        }
+
+        public void ApplyTaggingRules(IEnumerable<TaggingRule> rules) {
+            Tags = [];
+
+            foreach (var rule in rules) {
+                if ((rule.Target == RuleTarget.Exe || rule.Target == RuleTarget.Both) && rule.Regex.IsMatch(AppOrExe)) {
+                    Tags.AddRange(rule.Tags);
+                }
+                if ((rule.Target == RuleTarget.Name || rule.Target == RuleTarget.Both) && rule.Regex.IsMatch(Name)) {
+                    Tags.AddRange(rule.Tags);
+                }
+            }
+
+            Tags = [.. Tags.Distinct()];
         }
     }
 }

@@ -10,6 +10,8 @@ namespace Lumen.Modules.FocusStats.Data {
     public class FocusStatsContext(DbContextOptions options) : DbContext(options) {
         public const string SCHEMA_NAME = "focusstats";
 
+        public DbSet<CleaningRule> CleaningRules { get; set; }
+        public DbSet<TaggingRule> TaggingRules { get; set; }
         public DbSet<UserFocusedActivity> Activities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
@@ -38,21 +40,28 @@ namespace Lumen.Modules.FocusStats.Data {
                 .HasColumnType("character varying")
                 .HasDefaultValue("Unknown");
 
-            userFocusedActivityBuilder.Property<string[]>(nameof(UserFocusedActivity.Tags))
-                .HasColumnType("character varying[]")
-                .HasDefaultValue("[]");
+            userFocusedActivityBuilder.Property<List<string>>(nameof(UserFocusedActivity.Tags))
+                .HasColumnType("character varying[]");
 
             userFocusedActivityBuilder.HasKey(x => new { x.Device, x.StartTime });
+            userFocusedActivityBuilder.HasIndex(x => new { x.StartTime, x.SecondsDuration, x.AppOrExe, x.Name, x.Device });
         }
 
         private static void OnCleaningRuleModelCreating(ModelBuilder modelBuilder) {
             var cleaningRuleActivityBuilder = modelBuilder.Entity<CleaningRule>();
+
+            cleaningRuleActivityBuilder.Property<Guid>(nameof(CleaningRule.Id))
+                .HasColumnType("uuid");
+
             cleaningRuleActivityBuilder.Property<Regex>(nameof(CleaningRule.Regex))
                 .HasColumnType("character varying")
                 .HasConversion(
                     v => v.ToString(),
                     v => new Regex(v, RegexOptions.Compiled)
                 );
+
+            cleaningRuleActivityBuilder.Property<string>(nameof(CleaningRule.Replacement))
+                .HasColumnType("character varying");
 
             cleaningRuleActivityBuilder.Property<RuleTarget>(nameof(CleaningRule.Target))
                 .HasColumnType("character varying")
@@ -69,17 +78,25 @@ namespace Lumen.Modules.FocusStats.Data {
                     v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, emptyOptions)!
                 );
 
-            cleaningRuleActivityBuilder.HasKey(x => new { x.Regex });
+            cleaningRuleActivityBuilder.HasKey((x) => x.Id);
+            cleaningRuleActivityBuilder.HasIndex(x => new { x.Regex }).IsUnique();
         }
 
         private static void OnTaggingRuleModelCreating(ModelBuilder modelBuilder) {
             var taggingRuleActivityBuilder = modelBuilder.Entity<TaggingRule>();
+
+            taggingRuleActivityBuilder.Property<Guid>(nameof(TaggingRule.Id))
+                .HasColumnType("uuid");
+
             taggingRuleActivityBuilder.Property<Regex>(nameof(TaggingRule.Regex))
                 .HasColumnType("character varying")
                 .HasConversion(
                     v => v.ToString(),
                     v => new Regex(v, RegexOptions.Compiled)
                 );
+
+            taggingRuleActivityBuilder.Property<ICollection<string>>(nameof(TaggingRule.Tags))
+                .HasColumnType("character varying[]");
 
             taggingRuleActivityBuilder.Property<RuleTarget>(nameof(TaggingRule.Target))
                 .HasColumnType("character varying")
@@ -96,7 +113,8 @@ namespace Lumen.Modules.FocusStats.Data {
                     v => JsonSerializer.Deserialize<Dictionary<string, bool>>(v, emptyOptions)!
                 );
 
-            taggingRuleActivityBuilder.HasKey(x => new { x.Regex });
+            taggingRuleActivityBuilder.HasKey((x) => x.Id);
+            taggingRuleActivityBuilder.HasIndex(x => new { x.Regex }).IsUnique();
         }
     }
 }

@@ -1,76 +1,75 @@
-﻿using Lumen.Modules.FocusStats.Common;
-using Lumen.Modules.FocusStats.Common.Rules;
+﻿using Lumen.Modules.FocusStats.Business.Implementations;
+using Lumen.Modules.FocusStats.Business.Interfaces;
 using Lumen.Modules.FocusStats.Data;
 using Lumen.Modules.Sdk;
 
 using Microsoft.EntityFrameworkCore;
 
-using System.Text.Json;
-
 namespace Lumen.Modules.FocusStats.Module {
-    public class FocusStatsModule(LumenModuleRunsOnFlag runsOn, IEnumerable<ConfigEntry> configEntries, ILogger<LumenModuleBase> logger) : LumenModuleBase(runsOn, configEntries, logger) {
-        private static readonly List<CleaningRule> CleaningRules = [];
-        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
-            PropertyNameCaseInsensitive = true,
-        };
-
+    public class FocusStatsModule(IEnumerable<ConfigEntry> configEntries, ILogger<LumenModuleBase> logger, IServiceProvider provider) : LumenModuleBase(configEntries, logger, provider) {
         public override async Task InitAsync(LumenModuleRunsOnFlag currentEnv) {
-            logger.LogTrace("[{Date}] Loading settings ...", DateTime.Now);
-
-            var rulesDict = JsonSerializer.Deserialize<Dictionary<string, ParsedCleaningRule>>(File.ReadAllText("rules.json"), jsonSerializerOptions)!;
-            foreach (var item in rulesDict) {
-                CleaningRules.Add(new CleaningRule(item.Key, item.Value.Replacement, Enum.Parse<RuleTarget>(item.Value.Target), item.Value.Tests));
+            if (currentEnv == LumenModuleRunsOnFlag.Worker) {
+                await SubmitDataToAPI();
             }
-
-            // TODO: Run rules on database data
         }
 
-        public override Task RunAsync(LumenModuleRunsOnFlag currentEnv) {
+        public override Task RunAsync(LumenModuleRunsOnFlag currentEnv, DateTime date) {
             return currentEnv switch {
-                LumenModuleRunsOnFlag.UI => RunUIAsync(),
+                LumenModuleRunsOnFlag.API => RunCompressAsync(),
+                LumenModuleRunsOnFlag.Worker => RunClientWorkerAsync(date),
                 _ => throw new NotImplementedException(),
             };
         }
 
-        private async Task RunUIAsync() {
-            await RetrieveFocusStats();
-
-            if (ShouldSubmitToAPI()) {
-                SubmitDataToAPI();
+        private async Task RunCompressAsync() {
+            try {
+                var activitiesService = provider.GetRequiredService<IActivitiesService>();
+                await activitiesService.CompressActivitiesAsync(CancellationToken.None);
+            } catch (Exception e) {
+                logger.LogError(e, "[Weekly Task] Unexpected error when compressing activities in database.");
             }
         }
 
-        private void SubmitDataToAPI() {
-            // TODO: Call API
+        private async Task RunClientWorkerAsync(DateTime date) {
+            await RetrieveFocusStats();
+
+            if (ShouldSubmitToAPI(date)) {
+                await SubmitDataToAPI();
+            }
         }
 
-        private static bool ShouldSubmitToAPI() {
-            var now = DateTime.Now;
-            return now.Minute == 0 && now.Second == 0;
+        private Task SubmitDataToAPI() {
+            return Task.CompletedTask; // TODO: Call API
         }
 
-        private async Task RetrieveFocusStats() {
-            // TODO: Call Windows API
-            var exe = "";
-            var name = "";
-
-
+        private static bool ShouldSubmitToAPI(DateTime date) {
+            return date.Minute == 0 && date.Second == 0;
         }
 
-        public override bool ShouldRunNow(LumenModuleRunsOnFlag currentEnv) {
+        private Task RetrieveFocusStats() {
+            return Task.CompletedTask; // TODO: Call Windows API
+        }
+
+        public override bool ShouldRunNow(LumenModuleRunsOnFlag currentEnv, DateTime date) {
             return currentEnv switch {
-                LumenModuleRunsOnFlag.UI => DateTime.Now.Second == 0,
+                LumenModuleRunsOnFlag.API => (date.Second + date.Minute + date.Hour + date.DayOfWeek) == 0, // Run once a week
                 _ => false,
             };
         }
 
-        public override async Task ShutdownAsync() {
-            // Nothing to do here
+        public override Task ShutdownAsync() {
+            // Nothing to do
+            return Task.CompletedTask;
         }
 
         public static new void SetupServices(LumenModuleRunsOnFlag currentEnv, IServiceCollection serviceCollection, string? postgresConnectionString) {
             if (currentEnv == LumenModuleRunsOnFlag.API) {
                 serviceCollection.AddDbContext<FocusStatsContext>(o => o.UseNpgsql(postgresConnectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", FocusStatsContext.SCHEMA_NAME)));
+                serviceCollection.AddTransient<IActivitiesService, ActivitiesService>();
+                serviceCollection.AddTransient<ICleaningRulesService, CleaningRulesService>();
+                serviceCollection.AddTransient<ITaggingRulesService, TaggingRulesService>();
+            } else if (currentEnv == LumenModuleRunsOnFlag.Worker) {
+                serviceCollection.AddHttpClient();
             }
         }
 
