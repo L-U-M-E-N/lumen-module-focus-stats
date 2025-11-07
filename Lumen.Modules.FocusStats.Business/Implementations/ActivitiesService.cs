@@ -17,9 +17,6 @@ namespace Lumen.Modules.FocusStats.Business.Implementations {
             foreach (var activity in activities) {
                 if (context.Activities.Any((x) =>
                     x.StartTime == activity.StartTime &&
-                    x.SecondsDuration == activity.SecondsDuration &&
-                    x.AppOrExe == activity.AppOrExe &&
-                    x.Name == activity.Name &&
                     x.Device == activity.Device
                 )) {
                     continue; // Duplicate entry
