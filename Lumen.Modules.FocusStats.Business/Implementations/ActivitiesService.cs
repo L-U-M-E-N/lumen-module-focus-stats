@@ -101,6 +101,8 @@ namespace Lumen.Modules.FocusStats.Business.Implementations {
 
                 if (regexToMatch.IsMatch(activity.Name) || regexToMatch.IsMatch(activity.AppOrExe)) {
                     activity.ApplyTaggingRules(rules);
+                } else {
+                    context.Entry(activity).State = EntityState.Detached;
                 }
             }
 
