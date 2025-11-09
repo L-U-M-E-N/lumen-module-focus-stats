@@ -81,7 +81,11 @@ namespace Lumen.Modules.FocusStats.Business.Implementations {
                     return;
                 }
 
-                activity.ApplyNewCleaningRule(cleaningRule);
+                if (cleaningRule.Regex.IsMatch(activity.Name) || cleaningRule.Regex.IsMatch(activity.AppOrExe)) {
+                    activity.ApplyNewCleaningRule(cleaningRule);
+                } else {
+                    context.Entry(activity).State = EntityState.Detached;
+                }
             }
 
             logger.LogInformation("{Date} - Done with applying new cleaning rule! Saving to database ...", DateTime.UtcNow);
