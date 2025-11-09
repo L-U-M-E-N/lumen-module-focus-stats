@@ -20,7 +20,6 @@ namespace Lumen.Modules.FocusStats.Business.Implementations {
                 await context.SaveChangesAsync(cancellationToken);
 
                 await activitiesService.MassivelyApplyNewCleaningRuleAsync(cleaningRule, cancellationToken);
-                await activitiesService.CompressActivitiesAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
             } catch (Exception ex) {
