@@ -31,37 +31,46 @@ namespace Lumen.Modules.FocusStats.Business.Implementations {
 
         public async Task CompressActivitiesAsync(CancellationToken cancellationToken) {
             logger.LogInformation("{Date} - Starting to compress activities ...", DateTime.UtcNow);
-            var activities = await context.Activities.OrderBy(x => x.Device).ThenBy(x => x.StartTime).ToListAsync(cancellationToken);
-            List<UserFocusedActivity> toDelete = [];
-            for (int i = 0; i < activities.Count - 1; i++) {
-                if (cancellationToken.IsCancellationRequested) {
-                    return;
+
+            int cursor = 0;
+            int pageSize = 100_000;
+            while (true) {
+                var activities = await context.Activities.OrderBy(x => x.Device).ThenBy(x => x.StartTime).Skip(cursor).Take(pageSize).ToListAsync(cancellationToken);
+                if (activities.Count == 0) {
+                    break;
                 }
 
-                var newStart = activities[i].StartTime.AddSeconds(activities[i].SecondsDuration);
+                List<UserFocusedActivity> toDelete = [];
+                for (int j = 0; j < activities.Count - 1; j++) {
+                    if (cancellationToken.IsCancellationRequested) {
+                        return;
+                    }
 
-                if (
-                    activities[i].Device == activities[i + 1].Device &&
-                    activities[i].Name == activities[i + 1].Name &&
-                    activities[i].AppOrExe == activities[i + 1].AppOrExe &&
-                    newStart.CompareTo(activities[i].StartTime) == 0
-                ) {
+                    var newStart = activities[j].StartTime.AddSeconds(activities[j].SecondsDuration);
 
-                    activities[i].SecondsDuration += activities[i + 1].SecondsDuration;
-                    toDelete.Add(activities[i + 1]);
-                    activities.RemoveAt(i + 1);
+                    if (
+                        activities[j].Device == activities[j + 1].Device &&
+                        activities[j].Name == activities[j + 1].Name &&
+                        activities[j].AppOrExe == activities[j + 1].AppOrExe &&
+                        newStart.CompareTo(activities[j].StartTime) == 0
+                    ) {
 
-                    i--;
+                        activities[j].SecondsDuration += activities[j + 1].SecondsDuration;
+                        toDelete.Add(activities[j + 1]);
+                        activities.RemoveAt(j + 1);
+
+                        j--;
+                    }
                 }
+
+                context.RemoveRange(toDelete);
+                await context.SaveChangesAsync(cancellationToken);
+                context.ChangeTracker.Clear();
+
+                cursor += pageSize;
             }
 
-            context.RemoveRange(toDelete);
-
-            logger.LogInformation("{Date} - Done with compress activities! Saving to database ...", DateTime.UtcNow);
-
-            await context.SaveChangesAsync(cancellationToken);
-
-            logger.LogInformation("{Date} - Done with compress activities! Saving to database ... Done!", DateTime.UtcNow);
+            logger.LogInformation("{Date} - Done with compressing activities!", DateTime.UtcNow);
         }
 
         public async Task MassivelyApplyNewCleaningRuleAsync(CleaningRule cleaningRule, CancellationToken cancellationToken) {
