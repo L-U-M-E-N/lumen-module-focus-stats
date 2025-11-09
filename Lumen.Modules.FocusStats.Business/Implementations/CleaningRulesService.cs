@@ -14,12 +14,13 @@ namespace Lumen.Modules.FocusStats.Business.Implementations {
             }
 
             await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+            var taggingRules = await context.TaggingRules.ToListAsync(cancellationToken);
 
             try {
                 await context.CleaningRules.AddAsync(cleaningRule, cancellationToken);
                 await context.SaveChangesAsync(cancellationToken);
 
-                await activitiesService.MassivelyApplyNewCleaningRuleAsync(cleaningRule, cancellationToken);
+                await activitiesService.MassivelyApplyNewCleaningRuleAsync(cleaningRule, taggingRules, cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
             } catch (Exception ex) {

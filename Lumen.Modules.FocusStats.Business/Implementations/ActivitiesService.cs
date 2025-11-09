@@ -73,7 +73,7 @@ namespace Lumen.Modules.FocusStats.Business.Implementations {
             logger.LogInformation("{Date} - Done with compressing activities!", DateTime.UtcNow);
         }
 
-        public async Task MassivelyApplyNewCleaningRuleAsync(CleaningRule cleaningRule, CancellationToken cancellationToken) {
+        public async Task MassivelyApplyNewCleaningRuleAsync(CleaningRule cleaningRule, List<TaggingRule> taggingRules, CancellationToken cancellationToken) {
             logger.LogInformation("{Date} - Massively applying new cleaning rule ...", DateTime.UtcNow);
 
             await foreach (var activity in context.Activities.AsAsyncEnumerable()) {
@@ -83,6 +83,7 @@ namespace Lumen.Modules.FocusStats.Business.Implementations {
 
                 if (cleaningRule.Regex.IsMatch(activity.Name) || cleaningRule.Regex.IsMatch(activity.AppOrExe)) {
                     activity.ApplyNewCleaningRule(cleaningRule);
+                    activity.ApplyTaggingRules(taggingRules);
                 } else {
                     context.Entry(activity).State = EntityState.Detached;
                 }
