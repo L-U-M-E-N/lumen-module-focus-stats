@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Lumen.Modules.FocusStats.Data {
-    public class FocusStatsContext(DbContextOptions options) : DbContext(options) {
+    public class FocusStatsContext(DbContextOptions<FocusStatsContext> options) : DbContext(options) {
         public const string SCHEMA_NAME = "focusstats";
 
         public DbSet<CleaningRule> CleaningRules { get; set; }
