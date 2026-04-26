@@ -49,10 +49,16 @@ namespace Lumen.Modules.FocusStats.Common {
 
         public void ApplyNewCleaningRule(CleaningRule rule) {
             if ((rule.Target == RuleTarget.Exe || rule.Target == RuleTarget.Both) && rule.Regex.IsMatch(AppOrExe)) {
-                AppOrExe = rule.Clean(AppOrExe);
+                var newAppOrExe = rule.Clean(AppOrExe);
+                if (newAppOrExe != AppOrExe) {
+                    AppOrExe = newAppOrExe;
+                }
             }
             if ((rule.Target == RuleTarget.Name || rule.Target == RuleTarget.Both) && rule.Regex.IsMatch(Name)) {
-                Name = rule.Clean(Name);
+                var newName = rule.Clean(Name);
+                if (newName != AppOrExe) {
+                    Name = newName;
+                }
             }
         }
 

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Lumen.Modules.FocusStats.Business.Implementations {
     public class CleaningRulesService(FocusStatsContext context, ILogger<CleaningRulesService> logger, IActivitiesService activitiesService) : ICleaningRulesService {
         public async Task AddCleaningRuleAsync(CleaningRule cleaningRule, CancellationToken cancellationToken) {
-            if (context.CleaningRules.Any((t) => t.Id == cleaningRule.Id || t.Regex == cleaningRule.Regex)) {
+            if (await context.CleaningRules.AnyAsync((t) => t.Id == cleaningRule.Id || t.Regex == cleaningRule.Regex, cancellationToken)) {
                 throw new BusinessRuleException("Invalid cleaning rule, Id or RegExp already used");
             }
 
