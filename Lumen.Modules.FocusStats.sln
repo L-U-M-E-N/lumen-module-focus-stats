@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34408.163
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11716.220 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Data", "Lumen.Modules.FocusStats.Data\Lumen.Modules.FocusStats.Data.csproj", "{5F5CF6FB-1172-4B28-A4E1-C9CF8DB835CA}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Module", "Lumen.Modules.FocusStats.Module\Lumen.Modules.FocusStats.Module.csproj", "{F28E1C44-102D-4E9F-BEB8-3D1D84748678}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Common", "Lumen.Modules.FocusStats.Common\Lumen.Modules.FocusStats.Common.csproj", "{C2D828FD-C03E-43D8-B762-2B09C74E6496}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumen.Modules.FocusStats.Service", "Lumen.Modules.FocusStats.Service\Lumen.Modules.FocusStats.Service.csproj", "{986FD5CB-E6BB-4329-A0C3-659C6AC75D21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{C2D828FD-C03E-43D8-B762-2B09C74E6496}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2D828FD-C03E-43D8-B762-2B09C74E6496}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2D828FD-C03E-43D8-B762-2B09C74E6496}.Release|Any CPU.Build.0 = Release|Any CPU
+		{986FD5CB-E6BB-4329-A0C3-659C6AC75D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{986FD5CB-E6BB-4329-A0C3-659C6AC75D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{986FD5CB-E6BB-4329-A0C3-659C6AC75D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{986FD5CB-E6BB-4329-A0C3-659C6AC75D21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
