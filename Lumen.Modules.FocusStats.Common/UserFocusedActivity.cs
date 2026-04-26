@@ -74,7 +74,12 @@ namespace Lumen.Modules.FocusStats.Common {
                 }
             }
 
-            Tags = [.. Tags.Distinct()];
+            List<string> newTags = [.. Tags.Distinct()];
+            newTags.Sort();
+
+            if (string.Join(",", Tags) != string.Join(",", newTags)) {
+                Tags = newTags;
+            }
         }
     }
 }
