@@ -15,7 +15,7 @@ public sealed class WindowsBackgroundService(
                     logger.LogDebug("[Lumen.Modules.FocusStats.Service] Getting focused activity ...");
                     activityService.GetActivity();
 
-                    if ((DateTime.UtcNow - lastSubmitTime) >= TimeSpan.FromMinutes(2)) {
+                    if ((DateTime.UtcNow - lastSubmitTime) >= TimeSpan.FromMinutes(5)) {
                         logger.LogDebug("[Lumen.Modules.FocusStats.Service] Submitting data to the server ...");
                         lastSubmitTime = DateTime.UtcNow;
                         try {

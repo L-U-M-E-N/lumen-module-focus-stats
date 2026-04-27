@@ -11,7 +11,7 @@ namespace Lumen.Modules.FocusStats.Service {
 
             builder.Configuration
                 .AddUserSecrets<Program>()
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile(AppContext.BaseDirectory + "\\appsettings.json");
 
             LoggerProviderOptions.RegisterProviderOptions<EventLogSettings, EventLogLoggerProvider>(builder.Services);
 

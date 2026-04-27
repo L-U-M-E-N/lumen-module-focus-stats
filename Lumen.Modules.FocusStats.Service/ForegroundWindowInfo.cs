@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Lumen.Modules.FocusStats.Service {
-    public class ForegroundWindowInfo {
+    public static class ForegroundWindowInfo {
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
@@ -17,16 +16,17 @@ namespace Lumen.Modules.FocusStats.Service {
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         [DllImport("kernel32.dll")]
-        private static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+        private static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
-        [DllImport("psapi.dll")]
-        private static extern bool GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule,
-            [Out] StringBuilder lpBaseName, [In][MarshalAs(UnmanagedType.U4)] int nSize);
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern bool QueryFullProcessImageName(IntPtr hProcess, uint dwFlags, [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpExeName, ref uint lpdwSize);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern bool CloseHandle(IntPtr handle);
 
         private const int PROCESS_QUERY_INFORMATION = 0x0400;
-        private const int PROCESS_VM_READ = 0x0010;
 
-        public static (string WindowTitle, string ExePath) GetFocusedWindowInfo() {
+        public static (string WindowTitle, string ExePath) GetFocusedWindowInfo<T>(ILogger<T> logger) {
             IntPtr hwnd = GetForegroundWindow();
 
             if (hwnd == IntPtr.Zero)
@@ -34,22 +34,21 @@ namespace Lumen.Modules.FocusStats.Service {
 
             // Get window title
             int length = GetWindowTextLength(hwnd);
-            StringBuilder titleBuilder = new StringBuilder(length + 1);
+            StringBuilder titleBuilder = new(length + 1);
             GetWindowText(hwnd, titleBuilder, titleBuilder.Capacity);
             string windowTitle = titleBuilder.ToString();
 
             // Get process ID
             GetWindowThreadProcessId(hwnd, out uint processId);
 
-            // Get executable path
-            string exePath = string.Empty;
-            try {
-                using (Process process = Process.GetProcessById((int)processId)) {
-                    exePath = process.MainModule?.FileName ?? string.Empty;
-                }
-            } catch (Exception) {
-                // May fail if process is protected or doesn't exist anymore
+            nint hProc = OpenProcess(PROCESS_QUERY_INFORMATION, false, processId);
+            uint size = 1024;
+            StringBuilder exeBuilder = new((int)size);
+            if (!QueryFullProcessImageName(hProc, 0, exeBuilder, ref size)) {
+                CloseHandle(hProc);
             }
+
+            var exePath = exeBuilder.ToString();
 
             return (windowTitle, exePath);
         }
