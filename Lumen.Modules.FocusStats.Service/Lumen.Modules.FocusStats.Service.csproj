@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>dotnet-Lumen.Modules.FocusStats.Service-69548b24-4564-43d4-a5cd-d9248c2df543</UserSecretsId>
-		<OutputType>exe</OutputType>
+		<OutputType>WinExe</OutputType>
 		<PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<PlatformTarget>x64</PlatformTarget>

@@ -29,10 +29,14 @@ public sealed class GetActivitiesService(ILogger<GetActivitiesService> logger) {
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(cleanTitle)) {
+                cleanTitle = "?";
+            }
+
             CachedActivities.Add(
                 new NewUserActivityDto() {
                     AppOrExe = exe,
-                    Name = cleanTitle ?? "?",
+                    Name = cleanTitle,
                     Device = System.Environment.MachineName,
                     SecondsDuration = 1,
                     StartTime = date
