@@ -13,15 +13,21 @@ public sealed class GetActivitiesService(ILogger<GetActivitiesService> logger) {
     public void GetActivity() {
         var (title, exe) = ForegroundWindowInfo.GetFocusedWindowInfo(logger);
         var cleanTitle = title.Replace('–', '-');
+        if (string.IsNullOrWhiteSpace(cleanTitle)) {
+            cleanTitle = "?";
+        }
+        cleanTitle = cleanTitle[..Math.Min(1000, cleanTitle.Length)];
+        var cleanExe = exe ?? "";
+        cleanExe = cleanExe[..Math.Min(1000, cleanExe.Length)];
 
         var lastEntry = CachedActivities.LastOrDefault();
-        if (lastEntry?.AppOrExe == exe && lastEntry?.Name == cleanTitle) {
+        if (lastEntry?.AppOrExe == cleanExe && lastEntry?.Name == cleanTitle) {
             lastEntry.SecondsDuration++;
         } else {
             var date = DateTime.UtcNow;
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc); // Round it down to the second
 
-            if (string.IsNullOrWhiteSpace(exe)) {
+            if (string.IsNullOrWhiteSpace(cleanExe)) {
                 logger.LogWarning("Empty exe, skipping");
                 if (lastEntry != null) {
                     lastEntry.SecondsDuration++;
@@ -29,13 +35,9 @@ public sealed class GetActivitiesService(ILogger<GetActivitiesService> logger) {
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(cleanTitle)) {
-                cleanTitle = "?";
-            }
-
             CachedActivities.Add(
                 new NewUserActivityDto() {
-                    AppOrExe = exe,
+                    AppOrExe = cleanExe,
                     Name = cleanTitle,
                     Device = System.Environment.MachineName,
                     SecondsDuration = 1,
